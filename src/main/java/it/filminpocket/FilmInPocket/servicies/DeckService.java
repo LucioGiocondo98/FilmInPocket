@@ -4,6 +4,7 @@ import it.filminpocket.FilmInPocket.dtos.CreateDeckDto;
 import it.filminpocket.FilmInPocket.entities.Card;
 import it.filminpocket.FilmInPocket.entities.Deck;
 import it.filminpocket.FilmInPocket.entities.User;
+import it.filminpocket.FilmInPocket.exceptions.NotFoundException;
 import it.filminpocket.FilmInPocket.repositories.CardRepository;
 import it.filminpocket.FilmInPocket.repositories.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
