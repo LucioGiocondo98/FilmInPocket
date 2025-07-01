@@ -20,7 +20,9 @@ public class ActorCard extends Card{
     @CollectionTable(name = "card_filmography",joinColumns = @JoinColumn(name ="card_id" ))
     private List <String> filmography;
 
-    // Campi per la logica "add-on": bonus/malus istantanei a bersaglio singolo
+    /**
+     * Campi per la logica "add-on": bonus/malus istantanei a bersaglio singolo
+     */
     @Column(name = "opponent_debuff_attack")
     private int opponentDebuffAttack;
     @Column(name = "ally_buff_health")

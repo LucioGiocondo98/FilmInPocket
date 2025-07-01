@@ -11,9 +11,10 @@ import lombok.EqualsAndHashCode;
 @Entity
 @DiscriminatorValue("MOVIE")
 @Data
-// @EqualsAndHashCode è FONDAMENTALE quando si usa Lombok con l'ereditarietà.
-// callSuper = true dice a Lombok di includere anche i campi della classe madre (Card)
-// quando si confrontano due oggetti.
+/**
+ * callSuper = true dice a Lombok di includere anche i campi della classe madre (Card)
+ * quando si confrontano due oggetti.
+ * */
 @EqualsAndHashCode(callSuper = true)
 public class MovieCard extends Card{
     @Column(name = "release_year")
@@ -21,13 +22,17 @@ public class MovieCard extends Card{
     @Column(name = "director_name")
     private String directorName;
     private String genre;
-    //statistiche per parte gameplay
+
+
+    /**
+    * statistiche per parte gameplay
+    */
     @Column(name = "health_points")
     private int healthPoints;
     @Column(name = "attack_points")
     private int attackPoints;
 }
 /**
-Spiegazione: Questa è la carta base del nostro gioco.
- Oltre ai dati ereditati, aggiunge le statistiche di gioco (healthPoints, attackPoints) e le informazioni specifiche del film come anno, regista e genere.
+ * Questa è la carta base del nostro gioco.
+ * Oltre ai dati ereditati, aggiunge le statistiche di gioco (healthPoints, attackPoints) e le informazioni specifiche del film come anno, regista e genere.
 */

@@ -17,18 +17,23 @@ public class Deck {
     @Column(nullable = false)
     private String name;
 
-    // --- RELAZIONI ---
 
-    // Relazione Molti-a-Uno con User.
-    // @JoinColumn crea la colonna 'user_id' in questa tabella 'decks',
-    // che conterrà l'ID dell'utente proprietario.
-    // 'nullable = false' assicura che un mazzo debba SEMPRE appartenere a un utente.
+
+    /**
+     * Relazione Molti-a-Uno con User.
+     * @JoinColumn crea la colonna 'user_id' in questa tabella 'decks',
+     * che conterrà l'ID dell'utente proprietario.
+     * 'nullable = false' assicura che un mazzo debba SEMPRE appartenere a un utente.
+     */
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
-    // Relazione Molti-a-Molti con Card. Un mazzo contiene molte carte,
-    // e la stessa carta può essere in molti mazzi diversi.
+
+    /**
+     * Relazione Molti-a-Molti con Card. Un mazzo contiene molte carte,
+     * e la stessa carta può essere in molti mazzi diversi.
+     */
     @ManyToMany
     @JoinTable(name = "decks_cards",joinColumns = @JoinColumn(name = "deck_id"),inverseJoinColumns = @JoinColumn(name = "card_id"))
     private List<Card> cards;
