@@ -5,13 +5,13 @@ import it.filminpocket.FilmInPocket.entities.Card;
 import it.filminpocket.FilmInPocket.entities.Deck;
 import it.filminpocket.FilmInPocket.entities.User;
 import it.filminpocket.FilmInPocket.exceptions.NotFoundException;
+import it.filminpocket.FilmInPocket.exceptions.UnauthorizedException;
 import it.filminpocket.FilmInPocket.repositories.CardRepository;
 import it.filminpocket.FilmInPocket.repositories.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DeckService {
@@ -43,7 +43,7 @@ public class DeckService {
         Deck deck = deckRepository.findById(deckId)
                 .orElseThrow(() -> new NotFoundException("Mazzo non trovato con ID: " + deckId));
         if (deck.getUser().getId() != user.getId()) {
-            throw new SecurityException("Non hai il permesso di modificare questo mazzo.");
+            throw new UnauthorizedException("Non hai il permesso di modificare questo mazzo.");
         }
 
         if (updateDeckDto.getName() != null && !updateDeckDto.getName().isBlank()) {
@@ -89,7 +89,7 @@ public class DeckService {
         Deck deck = deckRepository.findById(deckId)
                 .orElseThrow(() -> new RuntimeException("Mazzo non trovato con ID: " + deckId));
         if (deck.getUser().getId() != user.getId()) {
-            throw new SecurityException("Non hai il permesso di eliminare questo mazzo.");
+            throw new UnauthorizedException("Non hai il permesso di eliminare questo mazzo.");
         }
         deckRepository.delete(deck);
     }

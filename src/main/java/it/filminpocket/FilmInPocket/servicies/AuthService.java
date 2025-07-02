@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import static it.filminpocket.FilmInPocket.servicies.UserCardAcquisitionService.RECHARGE_INTERVAL_HOURS;
 
 @Service
 public class AuthService {
@@ -28,6 +29,7 @@ public class AuthService {
 
     @Autowired
     private JwtTool jwtTool;
+
 
     public UserDto registerUser(UserRegistrationDto registrationDto) {
         if(userRepository.findByUsername(registrationDto.getUsername()).isPresent()) {
@@ -44,6 +46,7 @@ public class AuthService {
         userDto.setUsername(savedUser.getUsername());
         userDto.setEmail(savedUser.getEmail());
         userDto.setFilmTickets(savedUser.getFilmTickets());
+        userDto.setNextTicketRechargeTime(savedUser.getLastTicketRecharge().plusHours(RECHARGE_INTERVAL_HOURS));
 
         return userDto;
     }

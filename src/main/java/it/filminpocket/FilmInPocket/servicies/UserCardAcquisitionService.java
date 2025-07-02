@@ -25,7 +25,7 @@ public class UserCardAcquisitionService {
     private static final int TICKETS_PER_PACK = 1;
     private static final int CARDS_PER_PACK = 5;
     private static final int MAX_TICKETS = 2;
-    private static final int RECHARGE_INTERVA_HOURS = 12;
+    public static final int RECHARGE_INTERVAL_HOURS = 12;
 
     @Autowired
     private UserRepository userRepository;
@@ -113,7 +113,7 @@ public class UserCardAcquisitionService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime lastRechargeTicket = user.getLastTicketRecharge();
         long hoursPassed = Duration.between(lastRechargeTicket, now).toHours();
-        long periodPassed = hoursPassed / RECHARGE_INTERVA_HOURS;
+        long periodPassed = hoursPassed / RECHARGE_INTERVAL_HOURS;
         if (periodPassed > 0) {
             int ticketsAdded = 0;
             for (int i = 0; i < periodPassed; i++) {
@@ -124,7 +124,7 @@ public class UserCardAcquisitionService {
                     break;
                 }
             }
-            user.setLastTicketRecharge(lastRechargeTicket.plusHours(periodPassed * RECHARGE_INTERVA_HOURS));
+            user.setLastTicketRecharge(lastRechargeTicket.plusHours(periodPassed * RECHARGE_INTERVAL_HOURS));
             if (ticketsAdded > 0 || !lastRechargeTicket.equals(user.getLastTicketRecharge())) {
                 userRepository.save(user);
             }

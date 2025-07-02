@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Service
@@ -28,7 +29,7 @@ public class CardService {
             int userId, Rarity rarity,String genre,String directorName,Integer year,String cardTypeName) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato con ID: " + userId));
-        List<Card> allUserCards = user.getCollection();
+        Set<Card> allUserCards = user.getCollection();
 
         Stream<Card> cardStream = allUserCards.stream();
 
