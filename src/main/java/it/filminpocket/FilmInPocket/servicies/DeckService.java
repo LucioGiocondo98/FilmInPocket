@@ -31,16 +31,7 @@ public class DeckService {
         Deck newDeck= new Deck();
         newDeck.setName(createDeckDto.getName());
         newDeck.setUser(user);
-        if (createDeckDto.getCardIds()!=null && createDeckDto.getCardIds().isEmpty()){
-            List<Card> requestedCards= cardRepository.findAllById(createDeckDto.getCardIds());
-            List<Integer> userCollectionIds= user.getCollection().stream().map(Card::getId).collect(Collectors.toList());
-            for (Card card:requestedCards){
-                if (!userCollectionIds.contains(card.getId())){
-                    throw new NotFoundException("L'utente non possiede la carta con ID: "+ card.getId());
-                }
-            }
-            newDeck.setCards(requestedCards);
-        }
+        updateDeckCards(newDeck, createDeckDto.getCardIds(), user);
         return deckRepository.save(newDeck);
     }
 
@@ -50,13 +41,44 @@ public class DeckService {
      */
     public Deck updateDeck(int deckId, CreateDeckDto updateDeckDto, User user) {
         Deck deck = deckRepository.findById(deckId)
-                .orElseThrow(() -> new RuntimeException("Mazzo non trovato con ID: " + deckId));
+                .orElseThrow(() -> new NotFoundException("Mazzo non trovato con ID: " + deckId));
         if (deck.getUser().getId() != user.getId()) {
             throw new SecurityException("Non hai il permesso di modificare questo mazzo.");
         }
 
-        deck.setName(updateDeckDto.getName());
+        if (updateDeckDto.getName() != null && !updateDeckDto.getName().isBlank()) {
+            deck.setName(updateDeckDto.getName());
+        }
+
+        if (updateDeckDto.getCardIds() != null) {
+            updateDeckCards(deck, updateDeckDto.getCardIds(), user);
+        }
+
         return deckRepository.save(deck);
+    }
+
+    private void updateDeckCards(Deck deck, List<Integer> cardIds, User user) {
+        if (cardIds == null || cardIds.isEmpty()) {
+            deck.setCards(List.of());
+            return;
+        }
+
+        List<Card> requestedCards = cardRepository.findAllById(cardIds);
+
+        if (requestedCards.size() != cardIds.size()) {
+            throw new NotFoundException("Alcune carte richieste non sono state trovate.");
+        }
+
+        List<Integer> userCollectionIds = user.getCollection().stream()
+                .map(Card::getId)
+                .toList();
+
+        for (Card card : requestedCards) {
+            if (!userCollectionIds.contains(card.getId())) {
+                throw new NotFoundException("L'utente non possiede la carta con ID: " + card.getId() + " nella sua collezione.");
+            }
+        }
+        deck.setCards(requestedCards);
     }
 
 
