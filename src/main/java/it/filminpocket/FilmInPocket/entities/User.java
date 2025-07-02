@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+
 /**
  * Rappresenta un utente registrato al gioco.
  */
@@ -40,7 +40,7 @@ public class User implements UserDetails {
     */
     @ManyToMany
     @JoinTable(name = "user_collection",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "card_id"))
-    private List <Card> collection;
+    private Set<Card> collection=new HashSet<>();
 
     /**Relazione Uno-a-Molti con Deck.
     // 'mappedBy = "user"' dice a JPA che questa relazione è già "mappata" (gestita)
@@ -49,17 +49,24 @@ public class User implements UserDetails {
     // 'orphanRemoval = true' significa: se rimuovo un mazzo dalla lista di un utente, eliminalo dal DB
      */
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Deck> decks;
+    private List<Deck> decks= new ArrayList<>();
 
 
     /**
      *  Questo metodo viene eseguito AUTOMATICAMENTE prima di salvare un nuovo utente per la prima volta.
      */
     @PrePersist
-    protected void onCreate(){
-        createdAt=LocalDateTime.now();
-        filmTickets=2;
-        role=UserRole.ROLE_USER;
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        if (this.filmTickets == 0) {
+            this.filmTickets = 2;
+        }
+        if (this.lastTicketRecharge == null) {
+            this.lastTicketRecharge = LocalDateTime.now();
+        }
+        if (this.role == null) {
+            this.role = UserRole.ROLE_USER; // Ruolo di default
+        }
     }
 
     @Override

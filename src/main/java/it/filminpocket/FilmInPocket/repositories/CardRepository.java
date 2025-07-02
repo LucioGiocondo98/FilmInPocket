@@ -13,4 +13,5 @@ import java.util.List;
 // e ne traduce le eccezioni del database in eccezioni Spring più gestibili.
 @Repository
 public interface CardRepository extends JpaRepository<Card,Integer>, JpaSpecificationExecutor<Card> {
+    List<Card> findByRarity(Rarity rarity);
 }
