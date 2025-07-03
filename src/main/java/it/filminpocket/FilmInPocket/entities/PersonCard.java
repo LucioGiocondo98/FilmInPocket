@@ -1,15 +1,15 @@
 package it.filminpocket.FilmInPocket.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@NoArgsConstructor
 public abstract class PersonCard extends Card {
 
     @Column(name = "born_date")

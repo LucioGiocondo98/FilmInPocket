@@ -2,14 +2,21 @@ package it.filminpocket.FilmInPocket.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
+
 /**
  * Rappresenta un mazzo di carte creato da un utente.
  */
 @Entity
 @Table(name = "decks")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Deck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,16 +25,16 @@ public class Deck {
     private String name;
 
 
-
     /**
      * Relazione Molti-a-Uno con User.
-     * @JoinColumn crea la colonna 'user_id' in questa tabella 'decks',
+     *
+     * //@JoinColumn crea la colonna 'user_id' in questa tabella 'decks',
      * che conterrà l'ID dell'utente proprietario.
-     * 'nullable = false' assicura che un mazzo debba SEMPRE appartenere a un utente.
+     * 'Nullable = false' assicura che un mazzo debba SEMPRE appartenere a un utente.
      */
-    @ManyToOne
-    @JoinColumn(name = "user_id",nullable = false)
-    private User user;
+    //@ManyToOne
+    //@JoinColumn(name = "user_id", nullable = false)
+    //private User user;
 
 
     /**
@@ -35,8 +42,29 @@ public class Deck {
      * e la stessa carta può essere in molti mazzi diversi.
      */
     @ManyToMany
-    @JoinTable(name = "decks_cards",joinColumns = @JoinColumn(name = "deck_id"),inverseJoinColumns = @JoinColumn(name = "card_id"))
+    @JoinTable(name = "decks_cards", joinColumns = @JoinColumn(name = "deck_id"), inverseJoinColumns = @JoinColumn(name = "card_id"))
     private List<Card> cards;
+
+    @Override
+    public String toString() {
+        return "Deck{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Deck deck = (Deck) o;
+        return id == deck.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
 /**
  * Spiegazione: Deck è l'entità che fa da "ponte".

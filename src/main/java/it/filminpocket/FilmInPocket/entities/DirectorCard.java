@@ -1,8 +1,7 @@
 package it.filminpocket.FilmInPocket.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,8 +10,9 @@ import java.util.List;
  */
 @Entity
 @DiscriminatorValue("DIRECTOR")
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@NoArgsConstructor
 public class DirectorCard extends PersonCard{
 
     @Column(name = "film_attack_bonus")

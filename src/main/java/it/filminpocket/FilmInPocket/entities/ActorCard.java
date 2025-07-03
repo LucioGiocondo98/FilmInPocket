@@ -1,8 +1,7 @@
 package it.filminpocket.FilmInPocket.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,8 +11,9 @@ import java.util.List;
  */
 @Entity
 @DiscriminatorValue("ACTOR")
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@NoArgsConstructor
 public class ActorCard extends PersonCard{
 
     @Column(name = "opponent_debuff_attack")

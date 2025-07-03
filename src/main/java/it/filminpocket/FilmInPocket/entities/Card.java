@@ -3,8 +3,12 @@ package it.filminpocket.FilmInPocket.entities;
 import it.filminpocket.FilmInPocket.enumerated.Rarity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -13,11 +17,17 @@ import java.util.Set;
  * (Movie, Director, Actor) verranno salvate in un'unica tabella 'card'.
  */
 @Entity
-// @Inheritance definisce come salvare la gerarchia di classi. SINGLE_TABLE è la più performante.
+/**
+ * @Inheritance definisce come salvare la gerarchia di classi. SINGLE_TABLE è la più performante.
+*/
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-// @DiscriminatorColumn crea una colonna speciale per distinguere il tipo di carta (es. 'MOVIE').
+/**
+ *  @DiscriminatorColumn crea una colonna speciale per distinguere il tipo di carta (es. 'MOVIE').
+*/
 @DiscriminatorColumn(name = "card_type")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public abstract class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +41,32 @@ public abstract class Card {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rarity rarity;
-    @ManyToMany(mappedBy = "collection")
-    private Set<User> usersCollection= new HashSet<>();
+   // @ManyToMany(mappedBy = "collection")
+    //private Set<User> usersCollection= new HashSet<>();
+
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type='" + this.getClass().getSimpleName() + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return id == card.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }
 /**
 * A cosa serve?

@@ -2,7 +2,9 @@ package it.filminpocket.FilmInPocket.entities;
 
 import it.filminpocket.FilmInPocket.enumerated.UserRole;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +18,9 @@ import java.util.*;
  */
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,9 +42,9 @@ public class User implements UserDetails {
     // @JoinTable crea la tabella intermedia 'user_collection'
     // che collega l'ID dell'utente all'ID della carta.
     */
-    @ManyToMany
-    @JoinTable(name = "user_collection",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "card_id"))
-    private Set<Card> collection=new HashSet<>();
+   // @ManyToMany
+    //@JoinTable(name = "user_collection",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "card_id"))
+    //private Set<Card> collection=new HashSet<>();
 
     /**Relazione Uno-a-Molti con Deck.
     // 'mappedBy = "user"' dice a JPA che questa relazione è già "mappata" (gestita)
@@ -48,8 +52,8 @@ public class User implements UserDetails {
     // 'cascade = CascadeType.ALL' significa: se elimino un utente, elimina anche tutti i suoi mazzi.
     // 'orphanRemoval = true' significa: se rimuovo un mazzo dalla lista di un utente, eliminalo dal DB
      */
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Deck> decks= new ArrayList<>();
+    //@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    //private List<Deck> decks= new ArrayList<>();
 
 
     /**
@@ -65,7 +69,7 @@ public class User implements UserDetails {
             this.lastTicketRecharge = LocalDateTime.now();
         }
         if (this.role == null) {
-            this.role = UserRole.ROLE_USER; // Ruolo di default
+            this.role = UserRole.ROLE_USER;
         }
     }
 
@@ -92,6 +96,29 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
 
