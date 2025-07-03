@@ -64,7 +64,7 @@ public class UserCardAcquisitionService {
         List<CardDto> acquiredCards = new ArrayList<>();
         for (int i = 0; i < CARDS_PER_PACK; i++) {
             Card selectedCard = selectRandomCardByRarity(allAvailableCards);
-            user.getCollection().add(selectedCard);
+//            user.getCollection().add(selectedCard);
             acquiredCards.add(cardMapper.convertToDto(selectedCard));
         }
         userRepository.save(user);

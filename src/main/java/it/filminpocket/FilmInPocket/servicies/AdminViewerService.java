@@ -48,10 +48,10 @@ public class AdminViewerService {
             dto.setNextRechargeTime(user.getLastTicketRecharge().plusHours(UserCardAcquisitionService.RECHARGE_INTERVAL_HOURS));
         }
 
-        List<CardDto> collectionDto = user.getCollection().stream()
-                .map(cardMapper::convertToDto)
-                .collect(Collectors.toList());
-        dto.setCardDtoList(collectionDto);
+//        List<CardDto> collectionDto = user.getCollection().stream()
+//                .map(cardMapper::convertToDto)
+//                .collect(Collectors.toList());
+//        dto.setCardDtoList(collectionDto);
 
         List<DeckDto> decksDto = user.getDecks().stream()
                 .map(deckMapper::convertToDto)

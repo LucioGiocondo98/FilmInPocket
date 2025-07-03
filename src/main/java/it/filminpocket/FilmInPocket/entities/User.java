@@ -7,7 +7,6 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -16,7 +15,7 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = {"collection", "decks"}) // Esclude i campi che causano ricorsione da toString()
+@ToString(exclude = {"collection", "decks"})
 @EqualsAndHashCode(exclude = {"collection", "decks"})
 public class User implements UserDetails {
     @Id
@@ -47,12 +46,11 @@ public class User implements UserDetails {
     @JsonManagedReference
     private Set<Card> collection = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Deck> decks = new ArrayList<>();
 
-    // --- METODI UserDetails ---
-
+    // Metodi UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
