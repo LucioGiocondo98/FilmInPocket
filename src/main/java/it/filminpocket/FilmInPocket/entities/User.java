@@ -1,8 +1,9 @@
 package it.filminpocket.FilmInPocket.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.filminpocket.FilmInPocket.enumerated.UserRole;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +13,11 @@ import java.util.*;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 @NoArgsConstructor
+@ToString(exclude = {"collection", "decks"}) // Esclude i campi che causano ricorsione da toString()
+@EqualsAndHashCode(exclude = {"collection", "decks"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,37 +40,16 @@ public class User implements UserDetails {
     private LocalDateTime lastTicketRecharge;
     private LocalDateTime createdAt;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_collection",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
+    @JsonManagedReference
     private Set<Card> collection = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Deck> decks = new ArrayList<>();
-
-    // --- GETTERS E SETTERS MANUALI ---
-
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    public UserRole getRole() { return role; }
-    public void setRole(UserRole role) { this.role = role; }
-    public int getFilmTickets() { return filmTickets; }
-    public void setFilmTickets(int filmTickets) { this.filmTickets = filmTickets; }
-    public LocalDateTime getLastTicketRecharge() { return lastTicketRecharge; }
-    public void setLastTicketRecharge(LocalDateTime lastTicketRecharge) { this.lastTicketRecharge = lastTicketRecharge; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public Set<Card> getCollection() { return collection; }
-    public void setCollection(Set<Card> collection) { this.collection = collection; }
-    public List<Deck> getDecks() { return decks; }
-    public void setDecks(List<Deck> decks) { this.decks = decks; }
 
     // --- METODI UserDetails ---
 

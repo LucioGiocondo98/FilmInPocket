@@ -1,12 +1,19 @@
 package it.filminpocket.FilmInPocket.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.List;
 
 @Entity
 @Table(name = "decks")
+@Getter
+@Setter
 @NoArgsConstructor
+@ToString(exclude = {"user", "cards"})
+@EqualsAndHashCode(exclude = {"user", "cards"})
 public class Deck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,18 +30,10 @@ public class Deck {
     @JoinTable(name = "decks_cards",
             joinColumns = @JoinColumn(name = "deck_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
+    @JsonBackReference
     private List<Card> cards;
 
-    // --- GETTERS E SETTERS MANUALI ---
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-    public List<Card> getCards() { return cards; }
-    public void setCards(List<Card> cards) { this.cards = cards; }
 }
 /**
  * Spiegazione: Deck è l'entità che fa da "ponte".

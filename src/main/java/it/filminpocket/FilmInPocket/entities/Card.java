@@ -1,15 +1,22 @@
 package it.filminpocket.FilmInPocket.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.filminpocket.FilmInPocket.enumerated.Rarity;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "card_type")
+@Getter
+@Setter
 @NoArgsConstructor
+@ToString(exclude = "usersCollection")
+@EqualsAndHashCode(exclude = "usersCollection")
 public abstract class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,22 +36,9 @@ public abstract class Card {
     private Rarity rarity;
 
     @ManyToMany(mappedBy = "collection")
+    @JsonBackReference
     private Set<User> usersCollection = new HashSet<>();
 
-    // --- GETTERS E SETTERS MANUALI ---
-
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-    public Rarity getRarity() { return rarity; }
-    public void setRarity(Rarity rarity) { this.rarity = rarity; }
-    public Set<User> getUsersCollection() { return usersCollection; }
-    public void setUsersCollection(Set<User> usersCollection) { this.usersCollection = usersCollection; }
 }
 /**
 * A cosa serve?
