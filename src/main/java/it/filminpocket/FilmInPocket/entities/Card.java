@@ -2,71 +2,49 @@ package it.filminpocket.FilmInPocket.entities;
 
 import it.filminpocket.FilmInPocket.enumerated.Rarity;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
-/**
- * Superclasse ASTRATTA per tutti i tipi di carte del gioco.
- * Utilizza una strategia di ereditarietà SINGLE_TABLE, quindi tutte le carte
- * (Movie, Director, Actor) verranno salvate in un'unica tabella 'card'.
- */
 @Entity
-/**
- * @Inheritance definisce come salvare la gerarchia di classi. SINGLE_TABLE è la più performante.
-*/
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-/**
- *  @DiscriminatorColumn crea una colonna speciale per distinguere il tipo di carta (es. 'MOVIE').
-*/
 @DiscriminatorColumn(name = "card_type")
-@Getter
-@Setter
 @NoArgsConstructor
 public abstract class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column(nullable = false)
     private String name;
+
     @Column(length = 1000)
     private String description;
+
     @Column(name = "image_url")
     private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rarity rarity;
-   // @ManyToMany(mappedBy = "collection")
-    //private Set<User> usersCollection= new HashSet<>();
 
+    @ManyToMany(mappedBy = "collection")
+    private Set<User> usersCollection = new HashSet<>();
 
-    @Override
-    public String toString() {
-        return "Card{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", type='" + this.getClass().getSimpleName() + '\'' +
-                '}';
-    }
+    // --- GETTERS E SETTERS MANUALI ---
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Card card = (Card) o;
-        return id == card.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public Rarity getRarity() { return rarity; }
+    public void setRarity(Rarity rarity) { this.rarity = rarity; }
+    public Set<User> getUsersCollection() { return usersCollection; }
+    public void setUsersCollection(Set<User> usersCollection) { this.usersCollection = usersCollection; }
 }
 /**
 * A cosa serve?

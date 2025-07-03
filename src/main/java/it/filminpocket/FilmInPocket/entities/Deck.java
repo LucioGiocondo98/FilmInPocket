@@ -1,70 +1,40 @@
 package it.filminpocket.FilmInPocket.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.List;
-import java.util.Objects;
 
-/**
- * Rappresenta un mazzo di carte creato da un utente.
- */
 @Entity
 @Table(name = "decks")
-@Getter
-@Setter
 @NoArgsConstructor
 public class Deck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column(nullable = false)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    /**
-     * Relazione Molti-a-Uno con User.
-     *
-     * //@JoinColumn crea la colonna 'user_id' in questa tabella 'decks',
-     * che conterrà l'ID dell'utente proprietario.
-     * 'Nullable = false' assicura che un mazzo debba SEMPRE appartenere a un utente.
-     */
-    //@ManyToOne
-    //@JoinColumn(name = "user_id", nullable = false)
-    //private User user;
-
-
-    /**
-     * Relazione Molti-a-Molti con Card. Un mazzo contiene molte carte,
-     * e la stessa carta può essere in molti mazzi diversi.
-     */
     @ManyToMany
-    @JoinTable(name = "decks_cards", joinColumns = @JoinColumn(name = "deck_id"), inverseJoinColumns = @JoinColumn(name = "card_id"))
+    @JoinTable(name = "decks_cards",
+            joinColumns = @JoinColumn(name = "deck_id"),
+            inverseJoinColumns = @JoinColumn(name = "card_id"))
     private List<Card> cards;
 
-    @Override
-    public String toString() {
-        return "Deck{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
+    // --- GETTERS E SETTERS MANUALI ---
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Deck deck = (Deck) o;
-        return id == deck.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    public List<Card> getCards() { return cards; }
+    public void setCards(List<Card> cards) { this.cards = cards; }
 }
 /**
  * Spiegazione: Deck è l'entità che fa da "ponte".
