@@ -30,38 +30,34 @@ public class DeckController {
      * Endpoint per recuperare tutti i mazzi dell'utente autenticato.
      */
     @GetMapping
-    public ResponseEntity<List<DeckDto>> getUserDecks(Authentication authentication) {
+    public List<DeckDto> getUserDecks(Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         List<Deck> decks = deckService.findDecksByUser(currentUser);
-
-        // Converte la lista di entità in una lista di DTO
-        List<DeckDto> deckDtos = decks.stream()
+        return decks.stream()
                 .map(deckMapper::convertToDto)
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(deckDtos);
     }
 
     /**
      * Endpoint per creare un nuovo mazzo.
      */
     @PostMapping
-    public ResponseEntity<DeckDto> createDeck(@RequestBody @Validated CreateDeckDto createDeckDto, Authentication authentication) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public DeckDto createDeck(@RequestBody @Validated CreateDeckDto createDeckDto, Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         Deck createdDeck = deckService.createDeck(createDeckDto, currentUser);
-        DeckDto deckDto = deckMapper.convertToDto(createdDeck);
-        return new ResponseEntity<>(deckDto, HttpStatus.CREATED);
+        return deckMapper.convertToDto(createdDeck);
     }
 
     @PutMapping("/{deckId}")
-    public ResponseEntity<DeckDto> updateDeck(
+    public DeckDto updateDeck(
             @PathVariable int deckId,
             @RequestBody @Validated CreateDeckDto updateDeckDto, // Riusiamo il DTO di creazione
             Authentication authentication
     ) {
         User currentUser = (User) authentication.getPrincipal();
         Deck updatedDeck = deckService.updateDeck(deckId, updateDeckDto, currentUser);
-        return ResponseEntity.ok(deckMapper.convertToDto(updatedDeck));
+        return deckMapper.convertToDto(updatedDeck);
     }
 
     @DeleteMapping("/{deckId}")

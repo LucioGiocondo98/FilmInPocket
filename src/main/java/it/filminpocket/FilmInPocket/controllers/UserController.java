@@ -27,13 +27,12 @@ public class UserController {
      * L'utente deve avere almeno 1 filmTicket disponibile.
      */
     @PostMapping("/acquire-pack")
-    public ResponseEntity<List<CardDto>> acquireNewCardPack(Authentication authentication) {
+    public List<CardDto> acquireNewCardPack(Authentication authentication) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Utente non trovato."));
 
-        List<CardDto> acquiredCards = userCardAcquisitionService.acquireRandomCardPack(user.getId());
-        return new ResponseEntity<>(acquiredCards, HttpStatus.OK);
+        return userCardAcquisitionService.acquireRandomCardPack(user.getId());
     }
 
 }

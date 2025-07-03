@@ -27,7 +27,8 @@ public class CardController {
     private CardMapper cardMapper;
 
     @GetMapping("/collection")
-    public ResponseEntity<List<CardDto>> getMyCardCollection(
+    @ResponseStatus(HttpStatus.OK)
+    public List<CardDto> getMyCardCollection(
             @RequestParam(required = false) Rarity rarity,
             @RequestParam(required = false) String genre,
             @RequestParam(required = false) String directorName,
@@ -37,21 +38,26 @@ public class CardController {
     ){
         User user= (User) authentication.getPrincipal();
         List<Card> filteredCards=cardService.findUserCardsByFilter(user.getId(),rarity,genre,directorName,year,cardType);
-        List<CardDto> cardDto=filteredCards.stream().map(cardMapper::convertToDto).toList();
-        return ResponseEntity.ok(cardDto);
+        return filteredCards.stream().map(cardMapper::convertToDto).toList();
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public CardDto getCardById(@PathVariable int id){
+        return cardService.findCardById(id);
     }
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')") // <-- Questo metodo è accessibile solo agli ADMIN
-    public ResponseEntity<CardDto> createCard(@RequestBody @Validated CreateCardDto createCardDto) {
-        CardDto newCard = cardService.createCard(createCardDto);
-        return new ResponseEntity<>(newCard, HttpStatus.CREATED);
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CardDto createCard(@RequestBody @Validated CreateCardDto createCardDto) {
+        return cardService.createCard(createCardDto);
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')") // <-- Questo metodo è accessibile solo agli ADMIN
-    public ResponseEntity<CardDto> updateCard(@PathVariable int id, @RequestBody @Validated CreateCardDto createCardDto) {
-        CardDto updatedCard = cardService.updateCard(id, createCardDto);
-        return ResponseEntity.ok(updatedCard);
+    public CardDto updateCard(@PathVariable int id, @RequestBody @Validated CreateCardDto createCardDto) {
+        return cardService.updateCard(id, createCardDto);
     }
 
     @DeleteMapping("/{id}")

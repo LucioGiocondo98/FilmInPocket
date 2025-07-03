@@ -22,9 +22,9 @@ public class AuthController {
      * Accetta un DTO con i dati di registrazione e lo valida.
      */
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody @Validated UserRegistrationDto registrationDto) {
-        UserDto createdUser = authService.registerUser(registrationDto);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto registerUser(@RequestBody @Validated UserRegistrationDto registrationDto) {
+        return authService.registerUser(registrationDto);
     }
 
     /**
@@ -32,8 +32,8 @@ public class AuthController {
      * Accetta le credenziali e, se corrette, restituisce un token JWT.
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> loginUser(@RequestBody @Validated LoginRequestDto loginDto) {
-        LoginResponseDto loginResponse = authService.loginUser(loginDto);
-        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public LoginResponseDto loginUser(@RequestBody @Validated LoginRequestDto loginDto) {
+        return authService.loginUser(loginDto);
     }
 }

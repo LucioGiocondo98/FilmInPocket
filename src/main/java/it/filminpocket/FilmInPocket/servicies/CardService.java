@@ -25,6 +25,12 @@ public class CardService {
     @Autowired
     private CardMapper cardMapper;
 
+
+    public CardDto findCardById(int id){
+        Card card= cardRepository.findById(id).orElseThrow(()->new NotFoundException("Carta non trovata"));
+        return cardMapper.convertToDto(card);
+    }
+
     public List<Card> findUserCardsByFilter(
             int userId, Rarity rarity,String genre,String directorName,Integer year,String cardTypeName) {
         User user = userRepository.findById(userId)
