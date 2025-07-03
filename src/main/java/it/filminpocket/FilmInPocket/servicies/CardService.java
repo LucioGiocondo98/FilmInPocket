@@ -9,12 +9,12 @@ import it.filminpocket.FilmInPocket.mappers.CardMapper;
 import it.filminpocket.FilmInPocket.repositories.CardRepository;
 import it.filminpocket.FilmInPocket.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 @Service
 public class CardService {
@@ -25,51 +25,46 @@ public class CardService {
     @Autowired
     private CardMapper cardMapper;
 
+    /**
+     * Metodo con paginazione e filtri dinamici.
+     */
+    public Page<CardDto> findUserCardsByFilter(int userId, Rarity rarity, String genre, String directorName, Integer year, String cardType, Pageable pageable) {
+        // Specifica di base: le carte devono appartenere all'utente.
+        Specification<Card> spec = (root, query, cb) -> root.join("usersCollection").get("id").in(userId);
 
-    public CardDto findCardById(int id){
-        Card card= cardRepository.findById(id).orElseThrow(()->new NotFoundException("Carta non trovata"));
+        if (rarity != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("rarity"), rarity));
+        }
+        if (cardType != null && !cardType.isBlank()) {
+            spec = spec.and((root, query, cb) -> {
+                try {
+                    Class<?> type = Class.forName("it.filminpocket.FilmInPocket.entities." + cardType.trim() + "Card");
+                    return cb.equal(root.type(), type);
+                } catch (ClassNotFoundException e) {
+                    return cb.disjunction();
+                }
+            });
+        }
+        if (genre != null && !genre.isBlank()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("genre"), genre));
+        }
+        if (directorName != null && !directorName.isBlank()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("directorName"), directorName));
+        }
+        if (year != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("releaseYear"), year));
+        }
+
+        Page<Card> cardsPage = cardRepository.findAll(spec, pageable);
+        return cardsPage.map(cardMapper::convertToDto);
+    }
+
+    public CardDto findCardById(int id) {
+        Card card = cardRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
         return cardMapper.convertToDto(card);
     }
 
-    public List<Card> findUserCardsByFilter(
-            int userId, Rarity rarity,String genre,String directorName,Integer year,String cardTypeName) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato con ID: " + userId));
-        Set<Card> allUserCards = user.getCollection();
-
-        Stream<Card> cardStream = allUserCards.stream();
-
-        if (rarity != null) {
-            cardStream = cardStream.filter(card -> card.getRarity() == rarity);
-        }
-        if (cardTypeName != null && !cardTypeName.isBlank()) {
-            cardStream = cardStream.filter(card ->
-                    card.getClass().getSimpleName().equalsIgnoreCase(cardTypeName.trim() + "Card")
-            );
-        }
-        if (genre != null && !genre.isBlank()) {
-            cardStream = cardStream.filter(card ->
-                    card instanceof MovieCard && genre.equalsIgnoreCase(((MovieCard) card).getGenre())
-            );
-        }
-        if (directorName != null && !directorName.isBlank()) {
-            cardStream = cardStream.filter(card ->
-                    card instanceof MovieCard && directorName.equalsIgnoreCase(((MovieCard) card).getDirectorName())
-            );
-        }
-        if (year != null) {
-            cardStream = cardStream.filter(card ->
-                    card instanceof MovieCard && year.equals(((MovieCard) card).getReleaseYear())
-            );
-        }
-
-        return cardStream.toList();
-    }
-
-    /**
-     * Crea una nuova carta nel database.
-     * La logica determina che tipo di carta creare basandosi sul campo 'cardType' del DTO.
-     */
     public CardDto createCard(CreateCardDto dto) {
         Card card;
         switch (dto.getCardType().toUpperCase()) {
@@ -109,11 +104,6 @@ public class CardService {
         return cardMapper.convertToDto(savedCard);
     }
 
-
-    /**
-     * Aggiorna una carta esistente.
-     * La logica è simile alla creazione, ma parte da un'entità esistente.
-     */
     public CardDto updateCard(int id, CreateCardDto dto) {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
@@ -144,12 +134,10 @@ public class CardService {
         return cardMapper.convertToDto(updatedCard);
     }
 
-    /**
-     * Elimina una carta dal database.
-     */
     public void deleteCard(int id) {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
         cardRepository.delete(card);
     }
 }
+

@@ -14,15 +14,8 @@ import java.util.List;
 @DiscriminatorValue("ACTOR")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ActorCard extends Card{
-    private LocalDate bornDate;
-    @ElementCollection
-    @CollectionTable(name = "card_filmography",joinColumns = @JoinColumn(name ="card_id" ))
-    private List <String> filmography;
+public class ActorCard extends PersonCard{
 
-    /**
-     * Campi per la logica "add-on": bonus/malus istantanei a bersaglio singolo
-     */
     @Column(name = "opponent_debuff_attack")
     private int opponentDebuffAttack;
     @Column(name = "ally_buff_health")

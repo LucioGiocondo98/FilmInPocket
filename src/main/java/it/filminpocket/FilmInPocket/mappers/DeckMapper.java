@@ -3,9 +3,10 @@ package it.filminpocket.FilmInPocket.mappers;
 import it.filminpocket.FilmInPocket.dtos.DeckDto;
 import it.filminpocket.FilmInPocket.entities.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
-
+@Component
 public class DeckMapper {
     @Autowired
     private CardMapper cardMapper; // Riusiamo il mapper delle carte

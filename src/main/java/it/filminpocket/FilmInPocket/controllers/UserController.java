@@ -22,6 +22,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+
     /**
      * Endpoint per acquisire un pacchetto di 5 carte casuali consumando un ticket.
      * L'utente deve avere almeno 1 filmTicket disponibile.

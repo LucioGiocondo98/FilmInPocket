@@ -3,6 +3,10 @@ package it.filminpocket.FilmInPocket.entities;
 import it.filminpocket.FilmInPocket.enumerated.Rarity;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Superclasse ASTRATTA per tutti i tipi di carte del gioco.
  * Utilizza una strategia di ereditarietà SINGLE_TABLE, quindi tutte le carte
@@ -27,6 +31,8 @@ public abstract class Card {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rarity rarity;
+    @ManyToMany(mappedBy = "collection")
+    private Set<User> usersCollection= new HashSet<>();
 }
 /**
 * A cosa serve?

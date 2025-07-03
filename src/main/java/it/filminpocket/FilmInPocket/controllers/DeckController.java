@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/me/decks") // Rotta base per tutte le operazioni sui mazzi dell'utente
+@RequestMapping("/me/decks")
 public class DeckController {
 
     @Autowired

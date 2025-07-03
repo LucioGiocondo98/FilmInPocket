@@ -4,10 +4,8 @@ import it.filminpocket.FilmInPocket.dtos.LoginResponseDto;
 import it.filminpocket.FilmInPocket.dtos.UserDto;
 import it.filminpocket.FilmInPocket.dtos.UserRegistrationDto;
 import it.filminpocket.FilmInPocket.servicies.AuthService;
-import it.filminpocket.FilmInPocket.servicies.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

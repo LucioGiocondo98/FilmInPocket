@@ -8,6 +8,8 @@ import it.filminpocket.FilmInPocket.enumerated.Rarity;
 import it.filminpocket.FilmInPocket.mappers.CardMapper; // <-- IMPORTANTE
 import it.filminpocket.FilmInPocket.servicies.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,21 +30,20 @@ public class CardController {
 
     @GetMapping("/collection")
     @ResponseStatus(HttpStatus.OK)
-    public List<CardDto> getMyCardCollection(
+    public Page<CardDto> getMyCardCollection(
             @RequestParam(required = false) Rarity rarity,
             @RequestParam(required = false) String genre,
             @RequestParam(required = false) String directorName,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String cardType,
-            Authentication authentication
+            Authentication authentication,
+            Pageable pageable
     ){
         User user= (User) authentication.getPrincipal();
-        List<Card> filteredCards=cardService.findUserCardsByFilter(user.getId(),rarity,genre,directorName,year,cardType);
-        return filteredCards.stream().map(cardMapper::convertToDto).toList();
+        return cardService.findUserCardsByFilter(user.getId(),rarity,genre,directorName,year,cardType,pageable);
     }
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
     public CardDto getCardById(@PathVariable int id){
         return cardService.findCardById(id);
     }
@@ -54,15 +55,14 @@ public class CardController {
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')") // <-- Questo metodo è accessibile solo agli ADMIN
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public CardDto updateCard(@PathVariable int id, @RequestBody @Validated CreateCardDto createCardDto) {
         return cardService.updateCard(id, createCardDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')") // <-- Questo metodo è accessibile solo agli ADMIN
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteCard(@PathVariable int id) {
         cardService.deleteCard(id);
     }

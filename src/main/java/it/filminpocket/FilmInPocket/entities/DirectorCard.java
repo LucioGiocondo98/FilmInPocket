@@ -13,21 +13,8 @@ import java.util.List;
 @DiscriminatorValue("DIRECTOR")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DirectorCard extends Card{
-    @Column(name = "born_date")
-    private LocalDate bornDate;
-    /**
-    // @ElementCollection è usata per salvare una lista di valori semplici (qui, String).
-    // JPA creerà una tabella separata `card_filmography` per contenere questa lista.
-     */
-    @ElementCollection
-    @CollectionTable(name = "card_filmography",joinColumns = @JoinColumn(name ="card_id" ))
-    @Column(name = "film_title")
-    private List<String> filmography;
+public class DirectorCard extends PersonCard{
 
-    /**
-     * campi per gameplay
-    */
     @Column(name = "film_attack_bonus")
     private int filmAttackBonus;
     @Column(name = "film_health_bonus")
@@ -37,5 +24,4 @@ public class DirectorCard extends Card{
 /**
  * Spiegazione: Questa carta ha un ruolo strategico.
  * Non combatte direttamente, ma fornisce bonus passivi a tutte le carte film dello stesso regista che si trovano in gioco.
- * filmography è una List<String> gestita elegantemente da @ElementCollection.
  */
