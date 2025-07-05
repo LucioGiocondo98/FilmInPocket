@@ -13,4 +13,5 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card,Integer>, JpaSpecificationExecutor<Card> {
     List<Card> findByRarity(Rarity rarity);
+    boolean existsByName(String name);
 }

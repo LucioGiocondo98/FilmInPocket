@@ -4,6 +4,7 @@ import it.filminpocket.FilmInPocket.dtos.CardDto;
 import it.filminpocket.FilmInPocket.dtos.CreateCardDto;
 import it.filminpocket.FilmInPocket.entities.*;
 import it.filminpocket.FilmInPocket.enumerated.Rarity;
+import it.filminpocket.FilmInPocket.exceptions.BadRequestException;
 import it.filminpocket.FilmInPocket.exceptions.NotFoundException;
 import it.filminpocket.FilmInPocket.mappers.CardMapper;
 import it.filminpocket.FilmInPocket.repositories.CardRepository;
@@ -95,6 +96,9 @@ public class CardService {
 
 
     public CardDto createCard(CreateCardDto dto, MultipartFile image) throws IOException {
+        if (cardRepository.existsByName(dto.getName())) {
+            throw new BadRequestException("Esiste già una card con il nome: " + dto.getName());
+        }
         Card card;
         switch (dto.getCardType().toUpperCase()) {
             case "MOVIE":
