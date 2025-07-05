@@ -33,3 +33,4 @@ build/
 .vscode/
 # Ignora file di configurazione con segreti
 env.properties
+env.properties
