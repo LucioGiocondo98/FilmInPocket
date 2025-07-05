@@ -14,6 +14,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/cards")
@@ -26,22 +30,30 @@ public class CardController {
 
 
     @GetMapping("/collection")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @ResponseStatus(HttpStatus.OK)
     public Page<CardDto> getMyCardCollection(
             @RequestParam(required = false) Rarity rarity,
             @RequestParam(required = false) String genre,
-            @RequestParam(required = false) String directorName,
+            @RequestParam(required = false) String nameContains,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String cardType,
             Authentication authentication,
             Pageable pageable
-    ){
-        User user= (User) authentication.getPrincipal();
-        return cardService.findUserCardsByFilter(user.getId(),rarity,genre,directorName,year,cardType,pageable);
+    ) {
+        User user = (User) authentication.getPrincipal();
+        return cardService.findUserCardsByFilter(user.getId(),
+                Optional.ofNullable(nameContains),
+                Optional.ofNullable(rarity),
+                Optional.ofNullable(genre),
+                Optional.ofNullable(year),
+                Optional.ofNullable(cardType),
+                pageable
+        );
     }
 
     @GetMapping("/{id}")
-    public CardDto getCardById(@PathVariable int id){
+    public CardDto getCardById(@PathVariable int id) {
         return cardService.findCardById(id);
     }
 
@@ -49,13 +61,13 @@ public class CardController {
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    public CardDto createCard(@RequestBody @Validated CreateCardDto createCardDto) {
+    public CardDto createCard(@RequestBody @Validated CreateCardDto createCardDto) throws IOException {
         return cardService.createCard(createCardDto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public CardDto updateCard(@PathVariable int id, @RequestBody @Validated CreateCardDto createCardDto) {
+    public CardDto updateCard(@PathVariable int id, @RequestBody @Validated CreateCardDto createCardDto) throws IOException {
         return cardService.updateCard(id, createCardDto);
     }
 
@@ -64,5 +76,26 @@ public class CardController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteCard(@PathVariable int id) {
         cardService.deleteCard(id);
+    }
+
+
+    @PostMapping(value = "/with-image", consumes = "multipart/form-data")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CardDto createCardWithImage(
+            @ModelAttribute CreateCardDto dto,
+            @RequestParam(value = "image", required = false) MultipartFile image
+    ) throws IOException {
+        return cardService.createCard(dto, image);
+    }
+
+    @PutMapping(value = "/{id}/with-image", consumes = "multipart/form-data")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public CardDto updateCardWithImage(
+            @PathVariable int id,
+            @ModelAttribute CreateCardDto dto,
+            @RequestParam(value = "image", required = false) MultipartFile image
+    ) throws IOException {
+        return cardService.updateCard(id, dto, image);
     }
 }

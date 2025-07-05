@@ -13,8 +13,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class CardService {
@@ -24,52 +27,74 @@ public class CardService {
     private CardRepository cardRepository;
     @Autowired
     private CardMapper cardMapper;
+    @Autowired
+    private ImageUploadService imageUploadService;
 
     /**
      * Metodo con paginazione e filtri dinamici.
      */
-    public Page<CardDto> findUserCardsByFilter(int userId, Rarity rarity, String genre, String directorName, Integer year, String cardType, Pageable pageable) {
+    public Page<CardDto> findUserCardsByFilter(
+            int userId,
+            Optional<String> nameContains,
+            Optional<Rarity> rarity,
+            Optional<String> genre,
+            Optional<Integer> year,
+            Optional<String> cardType,
+            Pageable pageable
+    ) {
         // Specifica di base: le carte devono appartenere all'utente.
         Specification<Card> spec = (root, query, cb) -> root.join("usersCollection").get("id").in(userId);
 
-        if (rarity != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("rarity"), rarity));
+        if (rarity.isPresent()) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("rarity"), rarity.get()));
         }
-        if (cardType != null && !cardType.isBlank()) {
+
+        if (genre.isPresent() && !genre.get().isBlank()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("genre"), genre.get()));
+        }
+
+        if (year.isPresent()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("releaseYear"), year.get()));
+        }
+
+        if (nameContains.isPresent() && !nameContains.get().isBlank()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("name")), "%" + nameContains.get().toLowerCase() + "%"));
+        }
+        if (cardType.isPresent() && !cardType.get().isBlank()) {
+            String type = cardType.get().toUpperCase();
             spec = spec.and((root, query, cb) -> {
-                try {
-                    Class<?> type = Class.forName("it.filminpocket.FilmInPocket.entities." + cardType.trim() + "Card");
-                    return cb.equal(root.type(), type);
-                } catch (ClassNotFoundException e) {
-                    return cb.disjunction();
+                switch (type) {
+                    case "MOVIE":
+                        return cb.equal(root.type(), MovieCard.class);
+                    case "ACTOR":
+                        return cb.equal(root.type(), ActorCard.class);
+                    case "DIRECTOR":
+                        return cb.equal(root.type(), DirectorCard.class);
+                    default:
+                        return cb.conjunction(); // se tipo non valido, non applica nulla
                 }
             });
         }
-        if (genre != null && !genre.isBlank()) {
-            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("genre"), genre));
-        }
-        if (directorName != null && !directorName.isBlank()) {
-            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("directorName"), directorName));
-        }
-        if (year != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("releaseYear"), year));
-        }
-
         Page<Card> cardsPage = cardRepository.findAll(spec, pageable);
         return cardsPage.map(cardMapper::convertToDto);
     }
+
 
     public CardDto findCardById(int id) {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
         return cardMapper.convertToDto(card);
     }
+
+
     public Page<CardDto> getAllCards(Pageable pageable) {
         Page<Card> cardsPage = cardRepository.findAll(pageable);
         return cardsPage.map(cardMapper::convertToDto);
     }
 
-    public CardDto createCard(CreateCardDto dto) {
+
+    public CardDto createCard(CreateCardDto dto, MultipartFile image) throws IOException {
         Card card;
         switch (dto.getCardType().toUpperCase()) {
             case "MOVIE":
@@ -102,20 +127,30 @@ public class CardService {
         }
         card.setName(dto.getName());
         card.setDescription(dto.getDescription());
-        card.setImageUrl(dto.getImageUrl());
         card.setRarity(dto.getRarity());
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = imageUploadService.uploadImage(image);
+            card.setImageUrl(imageUrl);
+        } else {
+            card.setImageUrl(dto.getImageUrl());
+        }
         Card savedCard = cardRepository.save(card);
         return cardMapper.convertToDto(savedCard);
     }
 
-    public CardDto updateCard(int id, CreateCardDto dto) {
+
+    public CardDto updateCard(int id, CreateCardDto dto, MultipartFile image) throws IOException {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
         card.setName(dto.getName());
         card.setDescription(dto.getDescription());
-        card.setImageUrl(dto.getImageUrl());
         card.setRarity(dto.getRarity());
-
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = imageUploadService.uploadImage(image);
+            card.setImageUrl(imageUrl);
+        } else {
+            card.setImageUrl(dto.getImageUrl());
+        }
         if (card instanceof MovieCard movie && dto.getCardType().equalsIgnoreCase("MOVIE")) {
             movie.setReleaseYear(dto.getReleaseYear());
             movie.setDirectorName(dto.getDirectorName());
@@ -138,6 +173,8 @@ public class CardService {
         return cardMapper.convertToDto(updatedCard);
     }
 
+
+
     public void deleteCard(int id) {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
@@ -147,6 +184,58 @@ public class CardService {
 
     public Page<CardDto> findAll(Pageable pageable) {
         return cardRepository.findAll(pageable).map(cardMapper::convertToDto);
+    }
+
+    public CardDto createCard(CreateCardDto dto) throws IOException {
+        return createCard(dto, null); // passa null come immagine
+    }
+
+    public CardDto updateCard(int id, CreateCardDto dto) throws IOException {
+        return updateCard(id, dto, null); // passa null come immagine
+    }
+
+    public Page<CardDto> findAllWithFilters(
+            Optional<String> nameContains,
+            Optional<Rarity> rarity,
+            Optional<String> genre,
+            Optional<Integer> year,
+            Optional<String> cardType,
+            Pageable pageable
+    ) {
+        Specification<Card> spec = Specification.where(null);
+
+        if (rarity.isPresent()) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("rarity"), rarity.get()));
+        }
+
+        if (genre.isPresent() && !genre.get().isBlank()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("genre"), genre.get()));
+        }
+
+        if (year.isPresent()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.treat(root, MovieCard.class).get("releaseYear"), year.get()));
+        }
+
+        if (nameContains.isPresent() && !nameContains.get().isBlank()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("name")), "%" + nameContains.get().toLowerCase() + "%"));
+        }
+        if (cardType.isPresent() && !cardType.get().isBlank()) {
+            String type = cardType.get().toUpperCase();
+            spec = spec.and((root, query, cb) -> {
+                switch (type) {
+                    case "MOVIE":
+                        return cb.equal(root.type(), MovieCard.class);
+                    case "ACTOR":
+                        return cb.equal(root.type(), ActorCard.class);
+                    case "DIRECTOR":
+                        return cb.equal(root.type(), DirectorCard.class);
+                    default:
+                        return cb.conjunction(); // nessun filtro se il tipo non è valido
+                }
+            });
+        }
+        return cardRepository.findAll(spec, pageable).map(cardMapper::convertToDto);
     }
 }
 

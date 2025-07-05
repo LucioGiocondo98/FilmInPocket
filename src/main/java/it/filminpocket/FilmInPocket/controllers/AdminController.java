@@ -8,10 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController
@@ -37,6 +36,25 @@ public class AdminController {
     @GetMapping("/cards")
     public Page<CardDto> getAllCards(Pageable pageable) {
         return cardService.findAll(pageable);
+    }
+
+    @GetMapping("/filtered/cards")
+    public Page<CardDto> getFilteredCardsForAdmin(
+            @RequestParam(required = false) String nameContains,
+            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) it.filminpocket.FilmInPocket.enumerated.Rarity rarity,
+            @RequestParam(required = false) String cardType,
+            Pageable pageable
+    ) {
+        return cardService.findAllWithFilters(
+                Optional.ofNullable(nameContains),
+                Optional.ofNullable(rarity),
+                Optional.ofNullable(genre),
+                Optional.ofNullable(year),
+                Optional.ofNullable(cardType),
+                pageable
+        );
     }
 
 }
