@@ -1,10 +1,12 @@
 package it.filminpocket.FilmInPocket.entities;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDate;
-import java.util.List;
 /**
  * Rappresenta una carta di tipo Attore.
  * Funziona come una "Carta Magia Equipaggiamento".

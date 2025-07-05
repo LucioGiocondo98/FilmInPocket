@@ -1,7 +1,6 @@
 package it.filminpocket.FilmInPocket.servicies;
 
 import it.filminpocket.FilmInPocket.dtos.AdminUserViewDto;
-import it.filminpocket.FilmInPocket.dtos.CardDto;
 import it.filminpocket.FilmInPocket.dtos.DeckDto;
 import it.filminpocket.FilmInPocket.entities.User;
 import it.filminpocket.FilmInPocket.exceptions.NotFoundException;

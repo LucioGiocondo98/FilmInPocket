@@ -1,12 +1,17 @@
 package it.filminpocket.FilmInPocket.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.filminpocket.FilmInPocket.enumerated.UserRole;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -15,8 +20,9 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = {"collection", "decks"})
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @EqualsAndHashCode(exclude = {"collection", "decks"})
+@JsonIgnoreProperties({"collection", "decks"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,11 +49,10 @@ public class User implements UserDetails {
     @JoinTable(name = "user_collection",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Card> collection = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
     private List<Deck> decks = new ArrayList<>();
 
     // Metodi UserDetails
@@ -63,6 +68,16 @@ public class User implements UserDetails {
     public boolean isCredentialsNonExpired() { return true; }
     @Override
     public boolean isEnabled() { return true; }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
 
     @PrePersist
     protected void onCreate() {

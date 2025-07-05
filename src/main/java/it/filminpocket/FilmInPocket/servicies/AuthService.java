@@ -4,8 +4,9 @@ import it.filminpocket.FilmInPocket.dtos.LoginRequestDto;
 import it.filminpocket.FilmInPocket.dtos.LoginResponseDto;
 import it.filminpocket.FilmInPocket.dtos.UserDto;
 import it.filminpocket.FilmInPocket.dtos.UserRegistrationDto;
+import it.filminpocket.FilmInPocket.entities.CustomUserDetails;
 import it.filminpocket.FilmInPocket.entities.User;
-import it.filminpocket.FilmInPocket.exceptions.UnauthorizedException; // (Crea questa eccezione custom)
+import it.filminpocket.FilmInPocket.exceptions.UnauthorizedException;
 import it.filminpocket.FilmInPocket.repositories.UserRepository;
 import it.filminpocket.FilmInPocket.security.JwtTool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import static it.filminpocket.FilmInPocket.servicies.UserCardAcquisitionService.RECHARGE_INTERVAL_HOURS;
 
+import static it.filminpocket.FilmInPocket.servicies.UserCardAcquisitionService.RECHARGE_INTERVAL_HOURS;
 @Service
 public class AuthService {
     @Autowired
@@ -32,7 +33,7 @@ public class AuthService {
 
 
     public UserDto registerUser(UserRegistrationDto registrationDto) {
-        if(userRepository.findByUsername(registrationDto.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(registrationDto.getUsername()).isPresent()) {
             throw new RuntimeException("Username già in uso.");
         }
 
@@ -40,7 +41,13 @@ public class AuthService {
         newUser.setUsername(registrationDto.getUsername());
         newUser.setEmail(registrationDto.getEmail());
         newUser.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        // Assicura che venga settato un ruolo di default
+        if (newUser.getRole() == null) {
+            newUser.setRole(it.filminpocket.FilmInPocket.enumerated.UserRole.ROLE_USER);
+        }
+
         User savedUser = userRepository.save(newUser);
+
         UserDto userDto = new UserDto();
         userDto.setId(savedUser.getId());
         userDto.setUsername(savedUser.getUsername());
@@ -53,23 +60,15 @@ public class AuthService {
 
     public LoginResponseDto loginUser(LoginRequestDto loginDto) {
         try {
-
-            /**
-             * Usa l'AuthenticationManager per validare le credenziali
-              */
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
             );
 
-            /**
-             * Se l'autenticazione ha successo, estrai l'utente e crea il token
-              */
-            User user = (User) authentication.getPrincipal();
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            User user = userRepository.findById(userDetails.getId())
+                    .orElseThrow(() -> new UnauthorizedException("Utente non trovato"));
             String accessToken = jwtTool.createToken(user);
 
-            /**
-             * Crea il DTO per la risposta
-             */
             UserDto userDto = new UserDto();
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
@@ -79,10 +78,6 @@ public class AuthService {
             return new LoginResponseDto(accessToken, userDto);
 
         } catch (Exception e) {
-
-            /**
-             * Lancia un'eccezione se le credenziali sono errate
-             */
             throw new UnauthorizedException("Credenziali non valide. Effettua di nuovo il login.");
         }
     }

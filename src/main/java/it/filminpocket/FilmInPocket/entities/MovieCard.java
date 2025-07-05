@@ -3,7 +3,9 @@ package it.filminpocket.FilmInPocket.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Rappresenta una carta di tipo Film. Eredita tutti i campi da Card.

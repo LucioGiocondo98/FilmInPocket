@@ -1,9 +1,12 @@
 package it.filminpocket.FilmInPocket.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import it.filminpocket.FilmInPocket.enumerated.Rarity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +17,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @ToString(exclude = "usersCollection")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @EqualsAndHashCode(exclude = "usersCollection")
 public abstract class Card {
     @Id
@@ -34,6 +38,6 @@ public abstract class Card {
     private Rarity rarity;
 
     @ManyToMany(mappedBy = "collection", fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonIgnore
     private Set<User> usersCollection = new HashSet<>();
 }

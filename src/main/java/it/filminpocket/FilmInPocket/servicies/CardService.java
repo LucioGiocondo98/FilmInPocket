@@ -64,6 +64,10 @@ public class CardService {
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
         return cardMapper.convertToDto(card);
     }
+    public Page<CardDto> getAllCards(Pageable pageable) {
+        Page<Card> cardsPage = cardRepository.findAll(pageable);
+        return cardsPage.map(cardMapper::convertToDto);
+    }
 
     public CardDto createCard(CreateCardDto dto) {
         Card card;
@@ -138,6 +142,11 @@ public class CardService {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
         cardRepository.delete(card);
+    }
+
+
+    public Page<CardDto> findAll(Pageable pageable) {
+        return cardRepository.findAll(pageable).map(cardMapper::convertToDto);
     }
 }
 
