@@ -71,6 +71,13 @@ public class CardController {
         return cardService.updateCard(id, createCardDto);
     }
 
+    @PutMapping("/{id}/image")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public CardDto uploadCardImage(@PathVariable int id, @RequestParam("image") MultipartFile image) throws IOException {
+        return cardService.updateCardImage(id, image);
+    }
+
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -79,23 +86,7 @@ public class CardController {
     }
 
 
-    @PostMapping(value = "/with-image", consumes = "multipart/form-data")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @ResponseStatus(HttpStatus.CREATED)
-    public CardDto createCardWithImage(
-            @ModelAttribute CreateCardDto dto,
-            @RequestParam(value = "image", required = false) MultipartFile image
-    ) throws IOException {
-        return cardService.createCard(dto, image);
-    }
 
-    @PutMapping(value = "/{id}/with-image", consumes = "multipart/form-data")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public CardDto updateCardWithImage(
-            @PathVariable int id,
-            @ModelAttribute CreateCardDto dto,
-            @RequestParam(value = "image", required = false) MultipartFile image
-    ) throws IOException {
-        return cardService.updateCard(id, dto, image);
-    }
+
+
 }

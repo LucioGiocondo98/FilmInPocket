@@ -95,7 +95,7 @@ public class CardService {
     }
 
 
-    public CardDto createCard(CreateCardDto dto, MultipartFile image) throws IOException {
+    public CardDto createCard(CreateCardDto dto) throws IOException {
         if (cardRepository.existsByName(dto.getName())) {
             throw new BadRequestException("Esiste già una card con il nome: " + dto.getName());
         }
@@ -132,29 +132,19 @@ public class CardService {
         card.setName(dto.getName());
         card.setDescription(dto.getDescription());
         card.setRarity(dto.getRarity());
-        if (image != null && !image.isEmpty()) {
-            String imageUrl = imageUploadService.uploadImage(image);
-            card.setImageUrl(imageUrl);
-        } else {
-            card.setImageUrl(dto.getImageUrl());
-        }
+        card.setImageUrl(null);
         Card savedCard = cardRepository.save(card);
         return cardMapper.convertToDto(savedCard);
     }
 
 
-    public CardDto updateCard(int id, CreateCardDto dto, MultipartFile image) throws IOException {
+    public CardDto updateCard(int id, CreateCardDto dto) throws IOException {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
         card.setName(dto.getName());
         card.setDescription(dto.getDescription());
         card.setRarity(dto.getRarity());
-        if (image != null && !image.isEmpty()) {
-            String imageUrl = imageUploadService.uploadImage(image);
-            card.setImageUrl(imageUrl);
-        } else {
-            card.setImageUrl(dto.getImageUrl());
-        }
+        card.setImageUrl(null);
         if (card instanceof MovieCard movie && dto.getCardType().equalsIgnoreCase("MOVIE")) {
             movie.setReleaseYear(dto.getReleaseYear());
             movie.setDirectorName(dto.getDirectorName());
@@ -190,13 +180,21 @@ public class CardService {
         return cardRepository.findAll(pageable).map(cardMapper::convertToDto);
     }
 
-    public CardDto createCard(CreateCardDto dto) throws IOException {
-        return createCard(dto, null); // passa null come immagine
+    public CardDto updateCardImage(int id, MultipartFile image) throws IOException {
+        Card card = cardRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
+
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = imageUploadService.uploadImage(image);
+            card.setImageUrl(imageUrl);
+            cardRepository.save(card);
+        } else {
+            throw new BadRequestException("File immagine mancante o vuoto.");
+        }
+
+        return cardMapper.convertToDto(card);
     }
 
-    public CardDto updateCard(int id, CreateCardDto dto) throws IOException {
-        return updateCard(id, dto, null); // passa null come immagine
-    }
 
     public Page<CardDto> findAllWithFilters(
             Optional<String> nameContains,
