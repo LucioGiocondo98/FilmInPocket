@@ -1,6 +1,6 @@
 package it.filminpocket.FilmInPocket.security;
 
-import it.filminpocket.FilmInPocket.entities.CustomUserDetails;
+//import it.filminpocket.FilmInPocket.entities.CustomUserDetails;
 import it.filminpocket.FilmInPocket.entities.User;
 import it.filminpocket.FilmInPocket.exceptions.UnauthorizedException;
 import it.filminpocket.FilmInPocket.repositories.UserRepository;
@@ -45,10 +45,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UnauthorizedException("Token valido ma utente non trovato nel database"));
-            CustomUserDetails userDetails = new CustomUserDetails(user);
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

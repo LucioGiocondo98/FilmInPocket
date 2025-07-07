@@ -8,6 +8,7 @@ import it.filminpocket.FilmInPocket.exceptions.NotFoundException;
 import it.filminpocket.FilmInPocket.exceptions.UnauthorizedException;
 import it.filminpocket.FilmInPocket.repositories.CardRepository;
 import it.filminpocket.FilmInPocket.repositories.DeckRepository;
+import it.filminpocket.FilmInPocket.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ public class DeckService {
     private DeckRepository deckRepository;
     @Autowired
     private CardRepository cardRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Deck> findDecksByUser(User user){
         return deckRepository.findByUser(user);
@@ -27,21 +30,21 @@ public class DeckService {
     /**
     *Creo mazzo
      */
-    public Deck createDeck(CreateDeckDto createDeckDto,User user){
-        Deck newDeck= new Deck();
+    public Deck createDeck(CreateDeckDto createDeckDto, User user) {
+        Deck newDeck = new Deck();
         newDeck.setName(createDeckDto.getName());
         newDeck.setUser(user);
         updateDeckCards(newDeck, createDeckDto.getCardIds(), user);
         return deckRepository.save(newDeck);
     }
 
-
     /**
-     * Modifica un mazzo esistente.
+     * Aggiorna un mazzo esistente dell'utente.
      */
     public Deck updateDeck(int deckId, CreateDeckDto updateDeckDto, User user) {
         Deck deck = deckRepository.findById(deckId)
                 .orElseThrow(() -> new NotFoundException("Mazzo non trovato con ID: " + deckId));
+
         if (deck.getUser().getId() != user.getId()) {
             throw new UnauthorizedException("Non hai il permesso di modificare questo mazzo.");
         }
@@ -57,6 +60,9 @@ public class DeckService {
         return deckRepository.save(deck);
     }
 
+    /**
+     * Verifica che tutte le carte appartengano all’utente e aggiorna le carte del mazzo.
+     */
     private void updateDeckCards(Deck deck, List<Integer> cardIds, User user) {
         if (cardIds == null || cardIds.isEmpty()) {
             deck.setCards(List.of());
@@ -69,28 +75,35 @@ public class DeckService {
             throw new NotFoundException("Alcune carte richieste non sono state trovate.");
         }
 
-        List<Integer> userCollectionIds = user.getCollection().stream()
+        // Carica l’utente con la collezione per evitare LazyInitializationException
+        User userWithCollection = userRepository.findById(user.getId())
+                .orElseThrow(() -> new NotFoundException("Utente non trovato"));
+        userWithCollection.getCollection().size(); // forza inizializzazione lazy
+
+        List<Integer> userCollectionIds = userWithCollection.getCollection().stream()
                 .map(Card::getId)
                 .toList();
 
         for (Card card : requestedCards) {
             if (!userCollectionIds.contains(card.getId())) {
-                throw new NotFoundException("L'utente non possiede la carta con ID: " + card.getId() + " nella sua collezione.");
+                throw new NotFoundException("L'utente non possiede la carta con ID: " + card.getId());
             }
         }
+
         deck.setCards(requestedCards);
     }
 
-
     /**
-     * Elimina un mazzo.
+     * Elimina un mazzo se appartiene all’utente.
      */
     public void deleteDeck(int deckId, User user) {
         Deck deck = deckRepository.findById(deckId)
-                .orElseThrow(() -> new RuntimeException("Mazzo non trovato con ID: " + deckId));
+                .orElseThrow(() -> new NotFoundException("Mazzo non trovato con ID: " + deckId));
+
         if (deck.getUser().getId() != user.getId()) {
             throw new UnauthorizedException("Non hai il permesso di eliminare questo mazzo.");
         }
+
         deckRepository.delete(deck);
     }
 }

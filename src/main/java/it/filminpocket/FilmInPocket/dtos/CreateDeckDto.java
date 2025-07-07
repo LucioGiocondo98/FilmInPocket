@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class CreateDeckDto {
     @NotBlank
-    @Size(min = 3,max = 20)
+    @Size(min = 3,max = 50)
     private String name;
     private List<Integer> cardIds;
 }

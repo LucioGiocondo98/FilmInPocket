@@ -4,7 +4,7 @@ import it.filminpocket.FilmInPocket.dtos.LoginRequestDto;
 import it.filminpocket.FilmInPocket.dtos.LoginResponseDto;
 import it.filminpocket.FilmInPocket.dtos.UserDto;
 import it.filminpocket.FilmInPocket.dtos.UserRegistrationDto;
-import it.filminpocket.FilmInPocket.entities.CustomUserDetails;
+//import it.filminpocket.FilmInPocket.entities.CustomUserDetails;
 import it.filminpocket.FilmInPocket.entities.User;
 import it.filminpocket.FilmInPocket.exceptions.UnauthorizedException;
 import it.filminpocket.FilmInPocket.repositories.UserRepository;
@@ -63,10 +63,7 @@ public class AuthService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
             );
-
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            User user = userRepository.findById(userDetails.getId())
-                    .orElseThrow(() -> new UnauthorizedException("Utente non trovato"));
+            User user = (User) authentication.getPrincipal();
             String accessToken = jwtTool.createToken(user);
 
             UserDto userDto = new UserDto();

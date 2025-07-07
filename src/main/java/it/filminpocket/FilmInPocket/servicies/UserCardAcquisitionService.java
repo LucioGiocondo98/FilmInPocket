@@ -54,7 +54,7 @@ public class UserCardAcquisitionService {
                 .orElseThrow(() -> new NotFoundException("Utente non trovato con ID: " + userId));
 
         if (user.getFilmTickets() < TICKETS_PER_PACK) {
-            throw new BadRequestException("Non hai abbastanza filmTickets per acquisire un pacchetto di carte.");
+            throw new BadRequestException("Non hai abbastanza filmTickets per acquisire un nuovo pack.");
         }
         user.setFilmTickets(user.getFilmTickets() - TICKETS_PER_PACK);
         List<Card> allAvailableCards = cardRepository.findAll();
@@ -64,7 +64,7 @@ public class UserCardAcquisitionService {
         List<CardDto> acquiredCards = new ArrayList<>();
         for (int i = 0; i < CARDS_PER_PACK; i++) {
             Card selectedCard = selectRandomCardByRarity(allAvailableCards);
-//            user.getCollection().add(selectedCard);
+           user.getCollection().add(selectedCard);
             acquiredCards.add(cardMapper.convertToDto(selectedCard));
         }
         userRepository.save(user);

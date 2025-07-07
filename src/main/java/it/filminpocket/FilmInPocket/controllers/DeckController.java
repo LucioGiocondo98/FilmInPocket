@@ -51,7 +51,7 @@ public class DeckController {
     @PutMapping("/{deckId}")
     public DeckDto updateDeck(
             @PathVariable int deckId,
-            @RequestBody @Validated CreateDeckDto updateDeckDto, // Riusiamo il DTO di creazione
+            @RequestBody @Validated CreateDeckDto updateDeckDto,
             Authentication authentication
     ) {
         User currentUser = (User) authentication.getPrincipal();

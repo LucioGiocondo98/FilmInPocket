@@ -53,6 +53,7 @@ public class CardController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public CardDto getCardById(@PathVariable int id) {
         return cardService.findCardById(id);
     }
