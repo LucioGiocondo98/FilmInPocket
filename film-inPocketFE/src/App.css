@@ -1,0 +1,19 @@
+/* Importa i font per renderli disponibili globalmente */
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Lobster&display=swap');
+
+body {
+    /* Imposta Lobster come font di default per l'intera applicazione */
+    font-family: 'Lobster', cursive;
+    
+    /* Stile per lo sfondo nero sfumato */
+    background-color: #121212; 
+    background-image: radial-gradient(circle, #282828 0%, #121212 80%);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Puoi usare questa classe di utility se in alcuni punti hai bisogno di un font standard e leggibile */
+.font-standard {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}

@@ -1,0 +1,170 @@
+/* Stile condiviso per LoginForm e RegisterForm */
+
+.clapperboard {
+    width: 90%;
+    max-width: 450px;
+    color: #e8e4d9;
+    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.4));
+    position: relative;
+}
+
+.clapper {
+    height: 50px;
+    background-image: repeating-linear-gradient(115deg, #2c2c2c, #2c2c2c 30px, #e8e4d9 30px, #e8e4d9 60px);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border: 1px solid white;
+    position: relative;
+    transform: rotate(-5deg);
+    transform-origin: bottom left;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* REGOLA RIMOSSA: .clapperboard:hover .clapper è stato eliminato */
+
+.board {
+    background-color: #2a2a2a;
+    padding: 20px 30px 30px 30px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border: 1px solid white;
+    border-top: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    padding-top: 70px;
+}
+
+.clapper-static {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-image: repeating-linear-gradient(115deg, #2c2c2c, #2c2c2c 30px, #e8e4d9 30px, #e8e4d9 60px);
+    border-bottom: 1px solid white;
+    z-index: 5;
+}
+
+.board::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39sbGxra2uUlJSbm5uIiIiNjY2BgYFBQUF/f39ra2uEhIRra2sAAAAgJbvkAAAAnklEQVR42u3OMRLEQBCDwY25c+7d/2QZ9wU2NE2nE4UIKiG6rA/1pGZ6h0v1+XxeXz2U/iY20aN9G73h39b2x/SP3Tj2c22t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/2d/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/23t/2C2t1r2/2gAAAABJRU5ErkJggg==');
+    opacity: 0.05;
+    pointer-events: none;
+}
+
+.form-title {
+    font-size: 2.8rem;
+    font-weight: normal;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: none;
+    border-bottom: 1px dashed rgba(232, 228, 217, 0.4);
+    padding-bottom: 10px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+.form-control-clapper {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(232, 228, 217, 0.6);
+    border-radius: 0;
+    color: #e8e4d9;
+    font-size: 1.2rem;
+    padding: 10px 5px;
+    font-family: 'Kalam', cursive;
+}
+
+.form-control-clapper:focus {
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+    border-bottom-color: #d4a24d;
+    color: #fff;
+}
+
+.form-control-clapper::placeholder {
+    color: rgba(232, 228, 217, 0.5);
+    font-family: 'Kalam', cursive;
+}
+
+.action-button {
+    background-color: #d4a24d;
+    border: 1px solid #1a1a1a;
+    color: #1a1a1a;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    padding: 12px;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.action-button:hover {
+    background-color: #e7b86a;
+    color: #1a1a1a;
+}
+
+.toggle-text {
+    text-align: center;
+    margin-top: 20px;
+    font-family: sans-serif;
+    font-size: 0.9rem;
+}
+
+.toggle-link {
+    color: #d4a24d;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.toggle-link:hover {
+    color: #e8e4d9;
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .form-title {
+        font-size: 2.2rem;
+    }
+    .board {
+        padding: 15px 20px 20px 20px;
+        padding-top: 60px;
+    }
+    .action-button {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}
+
+/* NUOVE REGOLE PER L'ANIMAZIONE DEL CLAP */
+.clapper.clapping {
+    /* Applica l'animazione definita sotto */
+    animation: clap-animation 0.9s ease-in-out;
+}
+
+@keyframes clap-animation {
+    0% {
+        transform: rotate(-5deg); /* Stato iniziale */
+    }
+    25% {
+        transform: rotate(-15deg); /* Si alza un po' di più */
+    }
+    50% {
+        transform: rotate(0deg);  /* Posizione orizzontale (il "clap") */
+    }
+    100% {
+        transform: rotate(-5deg); /* Ritorna allo stato iniziale */
+    }
+}
