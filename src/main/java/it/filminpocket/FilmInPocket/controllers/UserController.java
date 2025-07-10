@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("me/cards")
@@ -46,4 +49,24 @@ public class UserController {
 
         return cardMapper.convertToDto(card);
     }
+
+    public Map<String, Object> getUserTicketsInfo(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+
+        // Aggiorna i ticket al momento della richiesta
+        userCardAcquisitionService.rechargeFilmTicketsForUser(user);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("filmTickets", user.getFilmTickets());
+
+        if (user.getFilmTickets() < 2 && user.getLastTicketRecharge() != null) {
+            LocalDateTime nextRecharge = user.getLastTicketRecharge().plusHours(12);
+            response.put("nextRecharge", nextRecharge);
+        } else {
+            response.put("nextRecharge", null);
+        }
+
+        return response;
+    }
+
 }
