@@ -14,7 +14,7 @@ public class UserController {
     @Autowired
     private UserCardAcquisitionService userCardAcquisitionService;
 
-    @GetMapping("/me")
+    @GetMapping("/me/tickets")
     public UserDto getCurrentUser(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         userCardAcquisitionService.rechargeFilmTicketsForUser(user);
