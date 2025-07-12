@@ -54,13 +54,16 @@ public class AuthService {
         newUser.setLastTicketRecharge(LocalDateTime.now());
 
         User savedUser = userRepository.save(newUser);
+        LocalDateTime nextRecharge = savedUser.getFilmTickets() < UserCardAcquisitionService.MAX_TICKETS
+                ? savedUser.getLastTicketRecharge().plusHours(RECHARGE_INTERVAL_HOURS)
+                : null;
 
         return new UserDto(
                 savedUser.getId(),
                 savedUser.getUsername(),
                 savedUser.getEmail(),
                 savedUser.getFilmTickets(),
-                savedUser.getLastTicketRecharge().plusHours(RECHARGE_INTERVAL_HOURS)
+                nextRecharge
         );
     }
 
@@ -72,6 +75,9 @@ public class AuthService {
 
             User user = (User) authentication.getPrincipal();
             String accessToken = jwtTool.createToken(user);
+            LocalDateTime nextRecharge = user.getFilmTickets() < UserCardAcquisitionService.MAX_TICKETS
+                    ? user.getLastTicketRecharge().plusHours(RECHARGE_INTERVAL_HOURS)
+                    : null;
 
             return new LoginResponseDto(
                     accessToken,
@@ -80,9 +86,7 @@ public class AuthService {
                             user.getUsername(),
                             user.getEmail(),
                             user.getFilmTickets(),
-                            user.getLastTicketRecharge() != null
-                                    ? user.getLastTicketRecharge().plusHours(RECHARGE_INTERVAL_HOURS)
-                                    : null
+                            nextRecharge
                     )
             );
 

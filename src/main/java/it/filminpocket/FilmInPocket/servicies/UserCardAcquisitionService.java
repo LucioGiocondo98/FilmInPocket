@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserCardAcquisitionService {
     private static final int TICKETS_PER_PACK = 1;
     private static final int CARDS_PER_PACK = 5;
-    private static final int MAX_TICKETS = 2;
+    public static final int MAX_TICKETS = 2;
     public static final int RECHARGE_INTERVAL_HOURS = 12;
 
     @Autowired
