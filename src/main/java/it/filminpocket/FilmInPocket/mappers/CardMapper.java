@@ -12,41 +12,43 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CardMapper {
-    public CardDto convertToDto(Card card){
-        if (card instanceof MovieCard movie){
-            MovieCardDto movieCardDto=new MovieCardDto();
+    public CardDto convertToDto(Card card) {
+        if (card instanceof MovieCard movie) {
+            MovieCardDto movieCardDto = new MovieCardDto();
             movieCardDto.setReleaseYear(movie.getReleaseYear());
             movieCardDto.setDirectorName(movie.getDirectorName());
             movieCardDto.setGenre(movie.getGenre());
             movieCardDto.setAttackPoints(movie.getAttackPoints());
             movieCardDto.setHealthPoints(movie.getHealthPoints());
-            copyBaseCardProperties(card,movieCardDto);
+            copyBaseCardProperties(card, movieCardDto);
             return movieCardDto;
         } else if (card instanceof DirectorCard director) {
-            DirectorCardDto directorCardDto=new DirectorCardDto();
+            DirectorCardDto directorCardDto = new DirectorCardDto();
             directorCardDto.setBornDate(director.getBornDate().toString());
             directorCardDto.setFilmHealthBonus(director.getFilmHealthBonus());
             directorCardDto.setFilmAttackBonus(director.getFilmAttackBonus());
+            directorCardDto.setFilmography(director.getFilmography()); // ⬅ AGGIUNTO
             copyBaseCardProperties(card, directorCardDto);
             return directorCardDto;
-        }else if (card instanceof ActorCard actor){
-            ActorCardDto actorCardDto=new ActorCardDto();
+        } else if (card instanceof ActorCard actor) {
+            ActorCardDto actorCardDto = new ActorCardDto();
             actorCardDto.setBornDate(actor.getBornDate().toString());
             actorCardDto.setOpponentDebuffAttack(actor.getOpponentDebuffAttack());
             actorCardDto.setAllyBuffHealth(actor.getAllyBuffHealth());
-            copyBaseCardProperties(card,actorCardDto);
+            actorCardDto.setFilmography(actor.getFilmography()); // ⬅ AGGIUNTO
+            copyBaseCardProperties(card, actorCardDto);
             return actorCardDto;
         }
-        throw new IllegalArgumentException("Tipo di carta non supportata: "+ card.getClass().getName());
+
+        throw new IllegalArgumentException("Tipo di carta non supportata: " + card.getClass().getName());
     }
 
-    private void copyBaseCardProperties(Card card,CardDto cardDto){
+    private void copyBaseCardProperties(Card card, CardDto cardDto) {
         cardDto.setId(card.getId());
         cardDto.setName(card.getName());
         cardDto.setDescription(card.getDescription());
         cardDto.setImageUrl(card.getImageUrl());
         cardDto.setRarity(card.getRarity().name());
-        cardDto.setCardType(card.getClass().getSimpleName().replace("Card",""));
+        cardDto.setCardType(card.getClass().getSimpleName().replace("Card", ""));
     }
-
 }
