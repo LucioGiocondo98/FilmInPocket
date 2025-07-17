@@ -63,7 +63,8 @@ public class AuthService {
                 savedUser.getUsername(),
                 savedUser.getEmail(),
                 savedUser.getFilmTickets(),
-                nextRecharge
+                nextRecharge,
+                savedUser.getRole()
         );
     }
 
@@ -86,7 +87,8 @@ public class AuthService {
                             user.getUsername(),
                             user.getEmail(),
                             user.getFilmTickets(),
-                            nextRecharge
+                            nextRecharge,
+                            user.getRole()
                     )
             );
 

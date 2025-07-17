@@ -1,5 +1,6 @@
 package it.filminpocket.FilmInPocket.dtos;
 
+import it.filminpocket.FilmInPocket.enumerated.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,4 +15,5 @@ public class UserDto {
     private String email;
     private int filmTickets;
     private LocalDateTime nextTicketRechargeTime;
+    private UserRole role;
 }
