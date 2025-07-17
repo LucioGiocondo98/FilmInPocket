@@ -26,7 +26,8 @@ public class UserController {
                 user.getFilmTickets(),
                 user.getLastTicketRecharge() != null
                         ? user.getLastTicketRecharge().plusHours(12)
-                        : null
+                        : null,
+                user.getRole()
         );
     }
 }
