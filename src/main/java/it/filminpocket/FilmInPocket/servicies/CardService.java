@@ -106,24 +106,24 @@ public class CardService {
                 movie.setReleaseYear(dto.getReleaseYear());
                 movie.setDirectorName(dto.getDirectorName());
                 movie.setGenre(dto.getGenre());
-                movie.setHealthPoints(dto.getHealthPoints());
-                movie.setAttackPoints(dto.getAttackPoints());
+              //  movie.setHealthPoints(dto.getHealthPoints() != null ? dto.getHealthPoints() : 0);
+                // movie.setAttackPoints(dto.getAttackPoints() != null ? dto.getAttackPoints() : 0);
                 card = movie;
                 break;
             case "DIRECTOR":
                 DirectorCard director = new DirectorCard();
                 director.setBornDate(LocalDate.parse(dto.getBornDate()));
                 director.setFilmography(dto.getFilmography());
-                director.setFilmAttackBonus(dto.getFilmAttackBonus());
-                director.setFilmHealthBonus(dto.getFilmHealthBonus());
+//                director.setFilmAttackBonus(dto.getFilmAttackBonus()!= null ? dto.getFilmAttackBonus():0);
+//                director.setFilmHealthBonus(dto.getFilmHealthBonus()!= null ? dto.getFilmHealthBonus():0);
                 card = director;
                 break;
             case "ACTOR":
                 ActorCard actor = new ActorCard();
                 actor.setBornDate(LocalDate.parse(dto.getBornDate()));
                 actor.setFilmography(dto.getFilmography());
-                actor.setOpponentDebuffAttack(dto.getOpponentDebuffAttack());
-                actor.setAllyBuffHealth(dto.getAllyBuffHealth());
+//                actor.setOpponentDebuffAttack(dto.getOpponentDebuffAttack()!= null ? dto.getOpponentDebuffAttack():0);
+//                actor.setAllyBuffHealth(dto.getAllyBuffHealth()!= null ? dto.getAllyBuffHealth():0);
                 card = actor;
                 break;
             default:
@@ -149,18 +149,18 @@ public class CardService {
             movie.setReleaseYear(dto.getReleaseYear());
             movie.setDirectorName(dto.getDirectorName());
             movie.setGenre(dto.getGenre());
-            movie.setHealthPoints(dto.getHealthPoints());
-            movie.setAttackPoints(dto.getAttackPoints());
+//            movie.setHealthPoints(dto.getHealthPoints());
+//            movie.setAttackPoints(dto.getAttackPoints());
         } else if (card instanceof DirectorCard director && dto.getCardType().equalsIgnoreCase("DIRECTOR")) {
             director.setBornDate(LocalDate.parse(dto.getBornDate()));
             director.setFilmography(dto.getFilmography());
-            director.setFilmAttackBonus(dto.getFilmAttackBonus());
-            director.setFilmHealthBonus(dto.getFilmHealthBonus());
+//            director.setFilmAttackBonus(dto.getFilmAttackBonus());
+//            director.setFilmHealthBonus(dto.getFilmHealthBonus());
         } else if (card instanceof ActorCard actor && dto.getCardType().equalsIgnoreCase("ACTOR")) {
             actor.setBornDate(LocalDate.parse(dto.getBornDate()));
             actor.setFilmography(dto.getFilmography());
-            actor.setOpponentDebuffAttack(dto.getOpponentDebuffAttack());
-            actor.setAllyBuffHealth(dto.getAllyBuffHealth());
+//            actor.setOpponentDebuffAttack(dto.getOpponentDebuffAttack());
+//            actor.setAllyBuffHealth(dto.getAllyBuffHealth());
         }
 
         Card updatedCard = cardRepository.save(card);

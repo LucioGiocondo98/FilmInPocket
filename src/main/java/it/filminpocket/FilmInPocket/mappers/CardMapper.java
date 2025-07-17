@@ -18,24 +18,24 @@ public class CardMapper {
             movieCardDto.setReleaseYear(movie.getReleaseYear());
             movieCardDto.setDirectorName(movie.getDirectorName());
             movieCardDto.setGenre(movie.getGenre());
-            movieCardDto.setAttackPoints(movie.getAttackPoints());
-            movieCardDto.setHealthPoints(movie.getHealthPoints());
+//            movieCardDto.setAttackPoints(movie.getAttackPoints());
+//            movieCardDto.setHealthPoints(movie.getHealthPoints());
             copyBaseCardProperties(card, movieCardDto);
             return movieCardDto;
         } else if (card instanceof DirectorCard director) {
             DirectorCardDto directorCardDto = new DirectorCardDto();
             directorCardDto.setBornDate(director.getBornDate().toString());
-            directorCardDto.setFilmHealthBonus(director.getFilmHealthBonus());
-            directorCardDto.setFilmAttackBonus(director.getFilmAttackBonus());
-            directorCardDto.setFilmography(director.getFilmography()); // ⬅ AGGIUNTO
+//            directorCardDto.setFilmHealthBonus(director.getFilmHealthBonus());
+//            directorCardDto.setFilmAttackBonus(director.getFilmAttackBonus());
+            directorCardDto.setFilmography(director.getFilmography());
             copyBaseCardProperties(card, directorCardDto);
             return directorCardDto;
         } else if (card instanceof ActorCard actor) {
             ActorCardDto actorCardDto = new ActorCardDto();
             actorCardDto.setBornDate(actor.getBornDate().toString());
-            actorCardDto.setOpponentDebuffAttack(actor.getOpponentDebuffAttack());
-            actorCardDto.setAllyBuffHealth(actor.getAllyBuffHealth());
-            actorCardDto.setFilmography(actor.getFilmography()); // ⬅ AGGIUNTO
+//            actorCardDto.setOpponentDebuffAttack(actor.getOpponentDebuffAttack());
+//            actorCardDto.setAllyBuffHealth(actor.getAllyBuffHealth());
+            actorCardDto.setFilmography(actor.getFilmography());
             copyBaseCardProperties(card, actorCardDto);
             return actorCardDto;
         }

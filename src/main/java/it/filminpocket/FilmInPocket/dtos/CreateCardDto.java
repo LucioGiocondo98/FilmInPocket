@@ -22,19 +22,19 @@ public class CreateCardDto {
     private Integer releaseYear;
     private String directorName;
     private String genre;
-    private Integer healthPoints;
-    private Integer attackPoints;
+   // private Integer healthPoints;
+    //private Integer attackPoints;
 
     // Campi Director/Actor
     private String bornDate;
     private List<String> filmography;
 
     // Campi DirectorCard
-    private Integer filmAttackBonus;
-    private Integer filmHealthBonus;
-
-    // Campi ActorCard
-    private Integer opponentDebuffAttack;
-    private Integer allyBuffHealth;
+//    private Integer filmAttackBonus;
+//    private Integer filmHealthBonus;
+//
+//    // Campi ActorCard
+//    private Integer opponentDebuffAttack;
+//    private Integer allyBuffHealth;
 }
 
