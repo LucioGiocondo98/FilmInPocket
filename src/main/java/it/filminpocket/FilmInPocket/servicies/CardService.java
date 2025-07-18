@@ -8,16 +8,20 @@ import it.filminpocket.FilmInPocket.exceptions.BadRequestException;
 import it.filminpocket.FilmInPocket.exceptions.NotFoundException;
 import it.filminpocket.FilmInPocket.mappers.CardMapper;
 import it.filminpocket.FilmInPocket.repositories.CardRepository;
+import it.filminpocket.FilmInPocket.repositories.DeckRepository;
 import it.filminpocket.FilmInPocket.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -30,6 +34,8 @@ public class CardService {
     private CardMapper cardMapper;
     @Autowired
     private ImageUploadService imageUploadService;
+    @Autowired
+    private DeckRepository deckRepository;
 
     /**
      * Metodo con paginazione e filtri dinamici.
@@ -168,10 +174,28 @@ public class CardService {
     }
 
 
-
+    @Transactional
     public void deleteCard(int id) {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Carta non trovata con ID: " + id));
+
+        // 1. Rimuovi la card da tutti gli utenti che la possiedono
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            if (user.getCollection().removeIf(c -> Objects.equals(c.getId(), id))) {
+                userRepository.save(user);
+            }
+        }
+
+        // 2. Rimuovi la card da tutti i mazzi che la includono
+        List<Deck> decks = deckRepository.findAll();
+        for (Deck deck : decks) {
+            if (deck.getCards().removeIf(c -> Objects.equals(c.getId(), id))) {
+                deckRepository.save(deck);
+            }
+        }
+
+        // 3. Elimina definitivamente la card
         cardRepository.delete(card);
     }
 

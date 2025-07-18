@@ -45,6 +45,7 @@ public class DeckController {
     public DeckDto createDeck(@RequestBody @Validated CreateDeckDto createDeckDto, Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         Deck createdDeck = deckService.createDeck(createDeckDto, currentUser);
+        System.out.println("Deck creato, ora eseguo il mapping:");
         return deckMapper.convertToDto(createdDeck);
     }
 

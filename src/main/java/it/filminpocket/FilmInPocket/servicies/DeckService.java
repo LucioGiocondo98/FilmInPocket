@@ -32,6 +32,8 @@ public class DeckService {
      */
     public Deck createDeck(CreateDeckDto createDeckDto, User user) {
         Deck newDeck = new Deck();
+        System.out.println("Nome del mazzo: " + createDeckDto.getName());
+        System.out.println("Card IDs ricevuti: " + createDeckDto.getCardIds());
         newDeck.setName(createDeckDto.getName());
         newDeck.setUser(user);
         updateDeckCards(newDeck, createDeckDto.getCardIds(), user);

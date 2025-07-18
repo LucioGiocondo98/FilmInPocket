@@ -10,6 +10,8 @@ import it.filminpocket.FilmInPocket.entities.DirectorCard;
 import it.filminpocket.FilmInPocket.entities.MovieCard;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class CardMapper {
     public CardDto convertToDto(Card card) {
@@ -27,7 +29,9 @@ public class CardMapper {
             directorCardDto.setBornDate(director.getBornDate().toString());
 //            directorCardDto.setFilmHealthBonus(director.getFilmHealthBonus());
 //            directorCardDto.setFilmAttackBonus(director.getFilmAttackBonus());
-            directorCardDto.setFilmography(director.getFilmography());
+            directorCardDto.setFilmography(
+                    director.getFilmography() != null ? director.getFilmography() : List.of()
+            );
             copyBaseCardProperties(card, directorCardDto);
             return directorCardDto;
         } else if (card instanceof ActorCard actor) {
@@ -35,7 +39,9 @@ public class CardMapper {
             actorCardDto.setBornDate(actor.getBornDate().toString());
 //            actorCardDto.setOpponentDebuffAttack(actor.getOpponentDebuffAttack());
 //            actorCardDto.setAllyBuffHealth(actor.getAllyBuffHealth());
-            actorCardDto.setFilmography(actor.getFilmography());
+            actorCardDto.setFilmography(
+                    actor.getFilmography() != null ? actor.getFilmography() : List.of()
+            );
             copyBaseCardProperties(card, actorCardDto);
             return actorCardDto;
         }
