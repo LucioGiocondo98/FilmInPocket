@@ -44,12 +44,10 @@ public class AuthService {
         newUser.setEmail(registrationDto.getEmail());
         newUser.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
 
-        // Imposta ruolo di default se mancante
         if (newUser.getRole() == null) {
             newUser.setRole(it.filminpocket.FilmInPocket.enumerated.UserRole.ROLE_USER);
         }
 
-        // Imposta i ticket iniziali
         newUser.setFilmTickets(2);
         newUser.setLastTicketRecharge(LocalDateTime.now());
 
@@ -64,7 +62,8 @@ public class AuthService {
                 savedUser.getEmail(),
                 savedUser.getFilmTickets(),
                 nextRecharge,
-                savedUser.getRole()
+                savedUser.getRole(),
+                savedUser.getImageUrl()
         );
     }
 
@@ -88,7 +87,8 @@ public class AuthService {
                             user.getEmail(),
                             user.getFilmTickets(),
                             nextRecharge,
-                            user.getRole()
+                            user.getRole(),
+                            user.getImageUrl()
                     )
             );
 

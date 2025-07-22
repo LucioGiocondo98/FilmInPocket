@@ -40,6 +40,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
+    @Column(nullable = true,name = "image_url")
+    private String imageUrl;
 
     private int filmTickets;
     private LocalDateTime lastTicketRecharge;
