@@ -150,7 +150,9 @@ public class CardService {
         card.setName(dto.getName());
         card.setDescription(dto.getDescription());
         card.setRarity(dto.getRarity());
-        card.setImageUrl(null);
+        if (dto.getImageUrl() != null && !dto.getImageUrl().isBlank()) {
+            card.setImageUrl(dto.getImageUrl());
+        }
         if (card instanceof MovieCard movie && dto.getCardType().equalsIgnoreCase("MOVIE")) {
             movie.setReleaseYear(dto.getReleaseYear());
             movie.setDirectorName(dto.getDirectorName());
