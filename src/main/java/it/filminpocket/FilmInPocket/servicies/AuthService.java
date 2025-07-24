@@ -40,19 +40,20 @@ public class AuthService {
             throw new RuntimeException("Username già in uso.");
         }
 
+        if (userRepository.findByEmail(registrationDto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email già registrata.");
+        }
+
         User newUser = new User();
         newUser.setUsername(registrationDto.getUsername());
         newUser.setEmail(registrationDto.getEmail());
         newUser.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
-
-        if (newUser.getRole() == null) {
-            newUser.setRole(it.filminpocket.FilmInPocket.enumerated.UserRole.ROLE_USER);
-        }
-
+        newUser.setRole(it.filminpocket.FilmInPocket.enumerated.UserRole.ROLE_USER);
         newUser.setFilmTickets(2);
         newUser.setLastTicketRecharge(ZonedDateTime.now(ZoneId.of("Europe/Rome")));
 
         User savedUser = userRepository.save(newUser);
+
         ZonedDateTime nextRecharge = savedUser.getFilmTickets() < UserCardAcquisitionService.MAX_TICKETS
                 ? savedUser.getLastTicketRecharge().plusHours(RECHARGE_INTERVAL_HOURS)
                 : null;
