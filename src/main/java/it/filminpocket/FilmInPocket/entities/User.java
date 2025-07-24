@@ -46,7 +46,7 @@ public class User implements UserDetails {
     private String imageUrl;
 
     private int filmTickets;
-    @Column(name = "last_ticket_recharge",columnDefinition = "TIMESTAMP WITH THE ZONE")
+    @Column(name = "last_ticket_recharge")
     private ZonedDateTime lastTicketRecharge;
     private LocalDateTime createdAt;
 
