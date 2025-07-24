@@ -56,7 +56,13 @@ public class UserCardAcquisitionService {
         if (user.getFilmTickets() < TICKETS_PER_PACK) {
             throw new BadRequestException("Non hai abbastanza filmTickets per acquisire un nuovo pack.");
         }
+
         user.setFilmTickets(user.getFilmTickets() - TICKETS_PER_PACK);
+        
+        if (user.getFilmTickets() < MAX_TICKETS) {
+            user.setLastTicketRecharge(LocalDateTime.now());
+        }
+
         List<Card> allAvailableCards = cardRepository.findAll();
         if (allAvailableCards.isEmpty()) {
             throw new BadRequestException("Nessuna carta disponibile per l'acquisto");
@@ -64,7 +70,7 @@ public class UserCardAcquisitionService {
         List<CardDto> acquiredCards = new ArrayList<>();
         for (int i = 0; i < CARDS_PER_PACK; i++) {
             Card selectedCard = selectRandomCardByRarity(allAvailableCards);
-           user.getCollection().add(selectedCard);
+            user.getCollection().add(selectedCard);
             acquiredCards.add(cardMapper.convertToDto(selectedCard));
         }
         userRepository.save(user);
