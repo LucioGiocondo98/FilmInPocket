@@ -145,8 +145,16 @@ public class UserCardAcquisitionService {
     @Transactional
     public void performScheduledTicketRechargeForAllUsers() {
         List<User> allUsers = userRepository.findAll();
+
         for (User user : allUsers) {
-            rechargeFilmTicketsForUser(user);
+            try {
+                System.out.println("Tentativo ricarica ticket per: " + user.getUsername());
+                rechargeFilmTicketsForUser(user);
+            } catch (Exception e) {
+                System.err.println("Errore nella ricarica per utente " + user.getUsername());
+                e.printStackTrace();
+            }
         }
     }
+
 }

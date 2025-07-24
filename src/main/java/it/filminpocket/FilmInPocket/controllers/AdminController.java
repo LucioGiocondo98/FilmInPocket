@@ -4,6 +4,7 @@ import it.filminpocket.FilmInPocket.dtos.AdminUserViewDto;
 import it.filminpocket.FilmInPocket.dtos.CardDto;
 import it.filminpocket.FilmInPocket.servicies.AdminViewerService;
 import it.filminpocket.FilmInPocket.servicies.CardService;
+import it.filminpocket.FilmInPocket.servicies.UserCardAcquisitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,8 @@ import java.util.Optional;
 public class AdminController {
     @Autowired
     private AdminViewerService adminViewerService;
+    @Autowired
+    private UserCardAcquisitionService userCardAcquisitionService;
 
     @Autowired
     private CardService cardService;
@@ -55,6 +58,15 @@ public class AdminController {
                 Optional.ofNullable(cardType),
                 pageable
         );
+    }
+    @PostMapping("/recharge-tickets")
+    public void rechargeAllTickets() {
+        try {
+            userCardAcquisitionService.performScheduledTicketRechargeForAllUsers();
+        } catch (Exception e) {
+            e.printStackTrace(); // stampa nel log di Koyeb
+            throw new RuntimeException("Errore durante la ricarica ticket", e);
+        }
     }
 
 }
