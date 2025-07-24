@@ -59,14 +59,10 @@ public class AdminController {
                 pageable
         );
     }
-    @PostMapping("/recharge-tickets")
-    public void rechargeAllTickets() {
-        try {
-            userCardAcquisitionService.performScheduledTicketRechargeForAllUsers();
-        } catch (Exception e) {
-            e.printStackTrace(); // stampa nel log di Koyeb
-            throw new RuntimeException("Errore durante la ricarica ticket", e);
-        }
-    }
 
+    @PostMapping("/force-recharge")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void forceRechargeAllTickets() {
+        userCardAcquisitionService.forceRechargeTicketsForAllUsers();
+    }
 }

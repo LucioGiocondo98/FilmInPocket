@@ -157,4 +157,20 @@ public class UserCardAcquisitionService {
         }
     }
 
+    @Transactional
+    public void forceRechargeTicketsToMax(User user) {
+        user.setFilmTickets(MAX_TICKETS); // Presuppone che MAX_TICKETS = 2
+        user.setLastTicketRecharge(ZonedDateTime.now(ZoneId.of("Europe/Rome")));
+        userRepository.save(user);
+    }
+    @Transactional
+    public void forceRechargeTicketsForAllUsers() {
+        List<User> allUsers = userRepository.findAll();
+        for (User user : allUsers) {
+            forceRechargeTicketsToMax(user);
+        }
+    }
+
+
+
 }
