@@ -15,7 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static it.filminpocket.FilmInPocket.servicies.UserCardAcquisitionService.RECHARGE_INTERVAL_HOURS;
 
@@ -49,10 +50,10 @@ public class AuthService {
         }
 
         newUser.setFilmTickets(2);
-        newUser.setLastTicketRecharge(LocalDateTime.now());
+        newUser.setLastTicketRecharge(ZonedDateTime.now(ZoneId.of("Europe/Rome")));
 
         User savedUser = userRepository.save(newUser);
-        LocalDateTime nextRecharge = savedUser.getFilmTickets() < UserCardAcquisitionService.MAX_TICKETS
+        ZonedDateTime nextRecharge = savedUser.getFilmTickets() < UserCardAcquisitionService.MAX_TICKETS
                 ? savedUser.getLastTicketRecharge().plusHours(RECHARGE_INTERVAL_HOURS)
                 : null;
 
@@ -75,7 +76,7 @@ public class AuthService {
 
             User user = (User) authentication.getPrincipal();
             String accessToken = jwtTool.createToken(user);
-            LocalDateTime nextRecharge = user.getFilmTickets() < UserCardAcquisitionService.MAX_TICKETS
+            ZonedDateTime nextRecharge = user.getFilmTickets() < UserCardAcquisitionService.MAX_TICKETS
                     ? user.getLastTicketRecharge().plusHours(RECHARGE_INTERVAL_HOURS)
                     : null;
 

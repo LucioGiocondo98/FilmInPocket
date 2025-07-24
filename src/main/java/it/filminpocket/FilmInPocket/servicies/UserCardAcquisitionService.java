@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -58,8 +60,9 @@ public class UserCardAcquisitionService {
         }
         user.setFilmTickets(user.getFilmTickets() - TICKETS_PER_PACK);
         if (user.getFilmTickets() < MAX_TICKETS) {
-            user.setLastTicketRecharge(LocalDateTime.now());
+            user.setLastTicketRecharge(ZonedDateTime.now(ZoneId.of("Europe/Rome")));
         }
+
         List<Card> allAvailableCards = cardRepository.findAll();
         if (allAvailableCards.isEmpty()) {
             throw new BadRequestException("Nessuna carta disponibile per l'acquisto");
@@ -109,14 +112,16 @@ public class UserCardAcquisitionService {
     @Transactional
     public void rechargeFilmTicketsForUser(User user) {
         if (user.getLastTicketRecharge() == null) {
-            user.setLastTicketRecharge(LocalDateTime.now());
+            user.setLastTicketRecharge(ZonedDateTime.now(ZoneId.of("Europe/Rome")));
             userRepository.save(user);
             return;
         }
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime lastRechargeTicket = user.getLastTicketRecharge();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Rome"));
+        ZonedDateTime lastRechargeTicket = user.getLastTicketRecharge();
+
         long hoursPassed = Duration.between(lastRechargeTicket, now).toHours();
         long periodPassed = hoursPassed / RECHARGE_INTERVAL_HOURS;
+
         if (periodPassed > 0) {
             int ticketsAdded = 0;
             for (int i = 0; i < periodPassed; i++) {

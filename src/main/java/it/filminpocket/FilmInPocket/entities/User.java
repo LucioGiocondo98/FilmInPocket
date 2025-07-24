@@ -13,6 +13,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Entity
@@ -44,7 +46,8 @@ public class User implements UserDetails {
     private String imageUrl;
 
     private int filmTickets;
-    private LocalDateTime lastTicketRecharge;
+    @Column(name = "last_ticket_recharge",columnDefinition = "TIMESTAMP WITH THE ZONE")
+    private ZonedDateTime lastTicketRecharge;
     private LocalDateTime createdAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -85,7 +88,8 @@ public class User implements UserDetails {
     protected void onCreate() {
         if(this.createdAt == null) this.createdAt = LocalDateTime.now();
         if(this.filmTickets == 0) this.filmTickets = 2;
-        if(this.lastTicketRecharge == null) this.lastTicketRecharge = LocalDateTime.now();
+        if(this.lastTicketRecharge == null)
+            this.lastTicketRecharge = ZonedDateTime.now(ZoneId.of("Europe/Rome"));
         if(this.role == null) this.role = UserRole.ROLE_USER;
     }
 }
