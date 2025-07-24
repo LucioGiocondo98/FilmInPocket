@@ -57,6 +57,9 @@ public class UserCardAcquisitionService {
             throw new BadRequestException("Non hai abbastanza filmTickets per acquisire un nuovo pack.");
         }
         user.setFilmTickets(user.getFilmTickets() - TICKETS_PER_PACK);
+        if (user.getFilmTickets() < MAX_TICKETS) {
+            user.setLastTicketRecharge(LocalDateTime.now());
+        }
         List<Card> allAvailableCards = cardRepository.findAll();
         if (allAvailableCards.isEmpty()) {
             throw new BadRequestException("Nessuna carta disponibile per l'acquisto");
