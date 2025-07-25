@@ -14,7 +14,7 @@ public class UserRegistrationDto {
     @Email(message = "Deve essere un'email valida")
     private String email;
     @NotBlank(message = "La password non può essere vuota")
-    @Size(min = 6, message = "La password deve contenere almeno 6 caratteri")
+    @Size(min = 3, message = "La password deve contenere almeno 3 caratteri")
     private String password;
 }
 
