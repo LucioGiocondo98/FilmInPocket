@@ -77,10 +77,10 @@ public class DeckService {
             throw new NotFoundException("Alcune carte richieste non sono state trovate.");
         }
 
-        // Carica l’utente con la collezione per evitare LazyInitializationException
+
         User userWithCollection = userRepository.findById(user.getId())
                 .orElseThrow(() -> new NotFoundException("Utente non trovato"));
-        userWithCollection.getCollection().size(); // forza inizializzazione lazy
+        userWithCollection.getCollection().size();
 
         List<Integer> userCollectionIds = userWithCollection.getCollection().stream()
                 .map(Card::getId)

@@ -259,7 +259,7 @@ public class CardService {
                     case "DIRECTOR":
                         return cb.equal(root.type(), DirectorCard.class);
                     default:
-                        return cb.conjunction(); // nessun filtro se il tipo non è valido
+                        return cb.conjunction();
                 }
             });
         }
